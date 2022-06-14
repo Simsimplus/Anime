@@ -2,6 +2,8 @@ import io.simsim.buildsrc.Libs.Version.coilVersion
 import io.simsim.buildsrc.Libs.Version.composeVersion
 import io.simsim.buildsrc.Libs.Version.hiltVersion
 import io.simsim.buildsrc.Libs.Version.naviVersion
+import io.simsim.buildsrc.Libs.Version.pagingVersion
+import io.simsim.buildsrc.Libs.Version.retrofitVersion
 
 plugins {
     id("com.android.application")
@@ -82,4 +84,18 @@ dependencies {
     //coil
     implementation("io.coil-kt:coil-compose:$coilVersion")
 //    implementation("io.coil-kt:coil-gif:$coilVersion")
+
+    //retrofit
+    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
+    //retrofit-converter
+    implementation("com.squareup.retrofit2:converter-moshi:$retrofitVersion")
+    implementation("com.squareup.moshi:moshi:1.13.0")
+    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.13.0")
+
+    //paging
+    implementation("androidx.paging:paging-runtime:$pagingVersion")
+    implementation("androidx.paging:paging-compose:1.0.0-alpha15")
+
+    //timber
+    implementation("com.jakewharton.timber:timber:5.0.1")
 }

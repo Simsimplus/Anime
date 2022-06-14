@@ -3,9 +3,8 @@ package io.simsim.anime
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import dagger.hilt.android.AndroidEntryPoint
+import io.simsim.anime.ui.screen.main.MainScreen
 import io.simsim.anime.ui.theme.AnimeTheme
 
 @AndroidEntryPoint
@@ -14,9 +13,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AnimeTheme {
-                Surface {
-                    Text(text = "hello anime!")
-                }
+                MainScreen()
             }
         }
     }
