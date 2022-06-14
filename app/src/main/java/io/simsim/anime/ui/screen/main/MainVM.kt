@@ -19,7 +19,8 @@ class MainVM @Inject constructor(
     @OptIn(ExperimentalPagingApi::class)
     val recommendations = Pager(
         config = PagingConfig(
-            pageSize = 10
+            pageSize = 10,
+            enablePlaceholders = true
         ),
         remoteMediator = rm
     ) {

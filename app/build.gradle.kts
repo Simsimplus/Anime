@@ -75,6 +75,9 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling:$composeVersion")
     debugImplementation("androidx.compose.ui:ui-test-manifest:$composeVersion")
 
+    // accompanist
+    implementation("com.google.accompanist:accompanist-placeholder-material:0.24.10-beta")
+
     //hilt
     implementation("com.google.dagger:hilt-android:$hiltVersion")
     kapt("com.google.dagger:hilt-compiler:$hiltVersion")

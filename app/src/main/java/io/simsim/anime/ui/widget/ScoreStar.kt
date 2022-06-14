@@ -19,13 +19,14 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ScoreStar(
+    modifier: Modifier = Modifier,
     @FloatRange(from = 0.0, to = 10.0) score: Float
 ) {
     val totalStar = 5
     val fullStar = score.div(2f).toInt()
     val hasHalfStar = score.mod(2f) > 0.3f
     CompositionLocalProvider(LocalContentColor.provides(io.simsim.anime.ui.theme.ScoreColor)) {
-        Row(verticalAlignment = Alignment.Bottom) {
+        Row(modifier = modifier, verticalAlignment = Alignment.Bottom) {
             repeat(fullStar) {
                 Icon(
                     modifier = Modifier.size(12.dp),
