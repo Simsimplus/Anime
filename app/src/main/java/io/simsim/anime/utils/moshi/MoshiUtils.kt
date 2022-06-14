@@ -1,4 +1,4 @@
-package io.simsim.island.utils.moshi
+package io.simsim.anime.utils.moshi
 
 import com.squareup.moshi.*
 import java.lang.reflect.ParameterizedType
@@ -13,7 +13,8 @@ fun <T> JsonAdapter<T>.toJsonOrEmpty(t: T): String = kotlin.runCatching {
 }.getOrDefault("")
 
 val moshi: Moshi by lazy {
-    Moshi.Builder().add(DefaultIfNullFactory).build()
+    Moshi.Builder().add(DefaultIfNullFactory)
+        .build()
 }
 
 object DefaultIfNullFactory : JsonAdapter.Factory {
@@ -63,4 +64,3 @@ inline fun <reified T> String.parseJsonList(): List<T>? {
     )
     return adapter.fromJsonNullable(this)
 }
-

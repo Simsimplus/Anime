@@ -8,9 +8,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainVM @Inject constructor(
-    private val repo: JikanRepo
+    repo: JikanRepo
 ) : ViewModel() {
-    val recommendations = repo.getRecentAnimeRecommendationsFlow(1).map {
+    val recommendations = repo.getTopAnime().map {
         it.data
     }
+//    init {
+//        viewModelScope.launch {
+//            repo.getRecentAnimeRecommendations(1).getOrNull()?.let {
+//                recommendations.emit(it.data)
+//            }
+//        }
+//    }
 }

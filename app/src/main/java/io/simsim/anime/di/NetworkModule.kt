@@ -6,11 +6,14 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.simsim.anime.network.api.JikanService
 import io.simsim.anime.network.repo.JikanRepo
-import io.simsim.island.utils.moshi.moshi
+import io.simsim.anime.utils.moshi.moshi
+import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
+import okhttp3.Protocol
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.create
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -19,7 +22,17 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun providesOkHttpClient() = OkHttpClient.Builder().build()
+    fun providesOkHttpClient() =
+        OkHttpClient.Builder()
+            .connectTimeout(20, TimeUnit.SECONDS)
+            .callTimeout(20, TimeUnit.SECONDS)
+            .readTimeout(20, TimeUnit.SECONDS)
+            .connectionPool(ConnectionPool(0, 1, TimeUnit.NANOSECONDS))
+            .protocols(listOf(Protocol.HTTP_1_1))
+            .hostnameVerifier { host, sslSection ->
+                true
+            }
+            .build()
 
     @Singleton
     @Provides

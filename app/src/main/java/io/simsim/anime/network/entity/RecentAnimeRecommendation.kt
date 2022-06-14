@@ -1,6 +1,5 @@
 package io.simsim.anime.network.entity
 
-
 import androidx.annotation.Keep
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
