@@ -4,6 +4,7 @@ import io.simsim.buildsrc.Libs.Version.hiltVersion
 import io.simsim.buildsrc.Libs.Version.naviVersion
 import io.simsim.buildsrc.Libs.Version.pagingVersion
 import io.simsim.buildsrc.Libs.Version.retrofitVersion
+import io.simsim.buildsrc.Libs.Version.roomVersion
 
 plugins {
     id("com.android.application")
@@ -98,4 +99,9 @@ dependencies {
 
     //timber
     implementation("com.jakewharton.timber:timber:5.0.1")
+
+    //room
+    implementation("androidx.room:room-ktx:$roomVersion")
+    kapt("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.room:room-paging:$roomVersion")
 }

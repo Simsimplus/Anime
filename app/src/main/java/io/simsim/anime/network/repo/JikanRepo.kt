@@ -20,8 +20,12 @@ class JikanRepo(
         service.getRecentAnimeRecommendations(page)
     }
 
-    fun getTopAnime() = safeRequestAsFlow {
-        service.getTopAnime()
+    fun getTopAnimeFlow(page: Int = 1) = safeRequestAsFlow {
+        service.getTopAnime(page)
+    }
+
+    suspend fun getTopAnime(page: Int = 1) = safeRequest {
+        service.getTopAnime(page)
     }
 }
 

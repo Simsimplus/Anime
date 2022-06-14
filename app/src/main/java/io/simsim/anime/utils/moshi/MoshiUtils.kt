@@ -42,8 +42,13 @@ object DefaultIfNullFactory : JsonAdapter.Factory {
 }
 
 inline fun <reified T> T.toJson(): String = moshi.adapter(T::class.java).toJsonOrEmpty(this)
+fun <T> T.toJson(clazz: Class<T>): String = moshi.adapter(clazz).toJsonOrEmpty(this)
+
 inline fun <reified T> String.parseJsonNullable(): T? =
     moshi.adapter(T::class.java).fromJsonNullable(this)
+
+fun <T> String.parseJsonNullable(clazz: Class<T>): T? =
+    moshi.adapter(clazz).fromJsonNullable(this)
 
 inline fun <reified T> List<T>.toJson(): String {
     val type: ParameterizedType = Types.newParameterizedType(

@@ -9,5 +9,6 @@ object Libs {
         const val spotlessVersion = "6.7.2"
         const val retrofitVersion = "2.9.0"
         const val pagingVersion = "3.1.1"
+        const val roomVersion = "2.4.2"
     }
 }
