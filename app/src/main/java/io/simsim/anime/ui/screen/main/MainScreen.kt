@@ -1,33 +1,30 @@
 package io.simsim.anime.ui.screen.main
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import androidx.paging.compose.collectAsLazyPagingItems
-import coil.compose.AsyncImage
-import coil.compose.AsyncImagePainter
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.placeholder
-import com.google.accompanist.placeholder.shimmer
 import io.simsim.anime.data.entity.TopAnimeResponse
+import io.simsim.anime.navi.NaviRoute
 import io.simsim.anime.ui.widget.ScoreStar
+import io.simsim.anime.utils.compose.CoilImage
 import io.simsim.anime.utils.compose.items
+import io.simsim.anime.utils.compose.placeholder
 
 @Composable
 fun MainScreen(
-    vm: MainVM = viewModel()
+    vm: MainVM = hiltViewModel(),
+    nvc: NavHostController
 ) {
     val topAnimeList = vm.recommendations.collectAsLazyPagingItems()
     val gap = 8.dp
@@ -53,7 +50,9 @@ fun MainScreen(
                 }
             ) { top ->
                 top?.let {
-                    TopAnimeCard(anime = top, imageSize = imageSize, placeholder = false)
+                    TopAnimeCard(anime = top, imageSize = imageSize, placeholder = false) {
+                        nvc.navigate(NaviRoute.Detail.getDetailRoute(top.malId))
+                    }
                 } ?: TopAnimeCard(
                     anime = TopAnimeResponse.TopAnimeData(),
                     imageSize = imageSize,
@@ -68,41 +67,23 @@ fun MainScreen(
 fun TopAnimeCard(
     anime: TopAnimeResponse.TopAnimeData,
     imageSize: DpSize,
-    placeholder: Boolean
+    placeholder: Boolean,
+    onClick: () -> Unit = {}
 ) {
-    var imageLoading by remember {
-        mutableStateOf(true)
-    }
-    val placeholderVisible = placeholder || imageLoading
     Column(
+        modifier = Modifier.clickable(onClick = onClick),
         verticalArrangement = Arrangement.spacedBy(3.dp)
     ) {
-        AsyncImage(
-            modifier = Modifier
-                .size(imageSize)
-                .clip(MaterialTheme.shapes.small)
-                .placeholder(
-                    visible = placeholderVisible,
-                    color = Color.White,
-                    highlight = PlaceholderHighlight.shimmer(
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-                    )
-                ),
+        CoilImage(
+            modifier = Modifier,
             model = anime.images.webp.imageUrl,
+            imageSize = imageSize,
             contentDescription = "",
-            alignment = Alignment.Center,
-            contentScale = ContentScale.Crop,
-            onState = {
-                imageLoading = it is AsyncImagePainter.State.Loading
-            }
+            showPlaceholderAlways = placeholder
         )
         Text(
             modifier = Modifier.placeholder(
-                visible = placeholderVisible,
-                color = Color.White,
-                highlight = PlaceholderHighlight.shimmer(
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-                )
+                visible = placeholder,
             ),
             text = if (placeholder) "placeholder" else anime.title,
             style = MaterialTheme.typography.labelSmall,
@@ -111,11 +92,7 @@ fun TopAnimeCard(
         )
         ScoreStar(
             modifier = Modifier.placeholder(
-                visible = placeholderVisible,
-                color = Color.White,
-                highlight = PlaceholderHighlight.shimmer(
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-                )
+                visible = placeholder,
             ),
             score = anime.score.coerceIn(0f, 10f)
         )
