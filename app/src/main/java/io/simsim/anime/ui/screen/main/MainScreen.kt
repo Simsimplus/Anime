@@ -104,7 +104,7 @@ fun TopAnimeCard(
                     MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
                 )
             ),
-            text = if (placeholder) "placeholder" else anime.titleEnglish,
+            text = if (placeholder) "placeholder" else anime.title,
             style = MaterialTheme.typography.labelSmall,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1
