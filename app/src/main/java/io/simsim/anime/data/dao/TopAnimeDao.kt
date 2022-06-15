@@ -4,22 +4,43 @@ import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import io.simsim.anime.data.entity.TopAnime
+import androidx.room.Transaction
+import io.simsim.anime.data.entity.TopAnimeResponse
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TopAnimeDao {
     @Query("select * from TopAnimeData order by score desc")
-    fun getAll(): Flow<List<TopAnime.TopAnimeData>>
+    fun getAll(): Flow<List<TopAnimeResponse.TopAnimeData>>
 
     @Query("select * from TopAnimeData order by score desc")
-    fun getAllPS(): PagingSource<Int, TopAnime.TopAnimeData>
+    fun getAllPS(): PagingSource<Int, TopAnimeResponse.TopAnimeData>
 
     @Query("delete from TopAnimeData")
     suspend fun clear()
 
+    @Transaction
     @Insert
     suspend fun insertAll(
-        datum: List<TopAnime.TopAnimeData>
+        datum: List<TopAnimeResponse.TopAnimeData>
     )
+
+    // pagination
+    @Insert
+    suspend fun insertPagination(
+        pagination: TopAnimeResponse.TopAnimePagination
+    )
+
+    @Query(
+        "select (currentPage + 1) from TopAnimePagination order by currentPage desc limit 1 "
+    )
+    suspend fun getNextPage(): Int?
+
+    @Transaction
+    suspend fun insertResponse(
+        response: TopAnimeResponse
+    ) {
+        insertAll(response.data)
+        insertPagination(response.pagination)
+    }
 }

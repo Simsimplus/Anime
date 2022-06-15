@@ -4,7 +4,7 @@ import androidx.room.TypeConverter
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import io.simsim.anime.data.entity.TopAnime
+import io.simsim.anime.data.entity.TopAnimeResponse
 import io.simsim.anime.utils.moshi.parseJsonNullable
 import io.simsim.anime.utils.moshi.toJson
 
@@ -37,16 +37,19 @@ abstract class ListConverter<T : Any>(
     }
 
     @TypeConverter
-    fun string2Type(string: String): List<T> {
+    fun string2List(string: String): List<T> {
         return adapter.fromJson(string)!!
     }
 
 }
 
 object ImagesConverter :
-    Converter<TopAnime.TopAnimeData.Images>(TopAnime.TopAnimeData.Images::class.java)
+    Converter<TopAnimeResponse.TopAnimeData.Images>(TopAnimeResponse.TopAnimeData.Images::class.java)
+
+object TopAnimePageInfoConverter :
+    Converter<TopAnimeResponse.TopAnimePagination.TopAnimePageInfo>(TopAnimeResponse.TopAnimePagination.TopAnimePageInfo::class.java)
 
 object ProducerListConverter :
-    ListConverter<TopAnime.TopAnimeData.Producer>(TopAnime.TopAnimeData.Producer::class.java)
+    ListConverter<TopAnimeResponse.TopAnimeData.Producer>(TopAnimeResponse.TopAnimeData.Producer::class.java)
 
 object StringListConverter : ListConverter<String>(String::class.java)

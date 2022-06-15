@@ -8,13 +8,13 @@ import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.simsim.anime.data.db.AnimeDataBase
-import io.simsim.anime.data.pagination.TopAnimeRM
+import io.simsim.anime.data.pagination.TopAnimeRemoteMediator
 import javax.inject.Inject
 
 @HiltViewModel
 class MainVM @Inject constructor(
     db: AnimeDataBase,
-    rm: TopAnimeRM
+    rm: TopAnimeRemoteMediator
 ) : ViewModel() {
     @OptIn(ExperimentalPagingApi::class)
     val recommendations = Pager(

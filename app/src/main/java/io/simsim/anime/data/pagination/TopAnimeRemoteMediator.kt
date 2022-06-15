@@ -5,23 +5,24 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import io.simsim.anime.data.db.AnimeDataBase
-import io.simsim.anime.data.entity.TopAnime
+import io.simsim.anime.data.entity.TopAnimeResponse
 import io.simsim.anime.network.repo.JikanRepo
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
-class TopAnimeRM @Inject constructor(
+class TopAnimeRemoteMediator @Inject constructor(
     private val repo: JikanRepo,
     private val db: AnimeDataBase
-) : RemoteMediator<Int, TopAnime.TopAnimeData>() {
+) : RemoteMediator<Int, TopAnimeResponse.TopAnimeData>() {
     override suspend fun load(
         loadType: LoadType,
-        state: PagingState<Int, TopAnime.TopAnimeData>
+        state: PagingState<Int, TopAnimeResponse.TopAnimeData>
     ): MediatorResult {
         val page = when (loadType) {
             LoadType.REFRESH -> 1
             LoadType.PREPEND -> return MediatorResult.Success(true)
-            LoadType.APPEND -> return MediatorResult.Success(true)
+            LoadType.APPEND -> db.topAnimeDao().getNextPage()
+                ?: return MediatorResult.Success(false)
             else -> {
                 return MediatorResult.Success(true)
             }
@@ -29,7 +30,7 @@ class TopAnimeRM @Inject constructor(
         return repo.getTopAnime(page).fold(
             onSuccess = { response ->
                 val endOfPaginationReached = !response.pagination.hasNextPage
-                db.topAnimeDao().insertAll(response.data)
+                db.topAnimeDao().insertResponse(response)
                 MediatorResult.Success(endOfPaginationReached)
             },
             onFailure = {

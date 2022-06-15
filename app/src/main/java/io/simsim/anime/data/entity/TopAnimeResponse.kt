@@ -9,9 +9,9 @@ import com.squareup.moshi.JsonClass
 
 @Keep
 @JsonClass(generateAdapter = true)
-data class TopAnime(
+data class TopAnimeResponse(
     @Json(name = "data") var `data`: List<TopAnimeData> = listOf(),
-    @Json(name = "pagination") var pagination: Pagination = Pagination()
+    @Json(name = "pagination") var pagination: TopAnimePagination = TopAnimePagination()
 ) {
     @Entity
     @Keep
@@ -188,16 +188,18 @@ data class TopAnime(
         )
     }
 
+    @Entity
     @Keep
     @JsonClass(generateAdapter = true)
-    data class Pagination(
+    data class TopAnimePagination(
+        @PrimaryKey @Json(name = "current_page") var currentPage: Int = 1,
         @Json(name = "has_next_page") var hasNextPage: Boolean = false,
-        @Json(name = "items") var items: Items = Items(),
-        @Json(name = "last_visible_page") var lastVisiblePage: Int = 0
+        @Json(name = "items") var items: TopAnimePageInfo = TopAnimePageInfo(),
+        @Json(name = "last_visible_page") var lastVisiblePage: Int = 0,
     ) {
         @Keep
         @JsonClass(generateAdapter = true)
-        data class Items(
+        data class TopAnimePageInfo(
             @Json(name = "count") var count: Int = 0,
             @Json(name = "per_page") var perPage: Int = 0,
             @Json(name = "total") var total: Int = 0

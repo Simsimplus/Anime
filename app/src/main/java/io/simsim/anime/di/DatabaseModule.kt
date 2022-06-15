@@ -2,8 +2,6 @@ package io.simsim.anime.di
 
 import android.app.Application
 import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,16 +16,7 @@ object DatabaseModule {
     @Singleton
     fun provideDB(
         app: Application
-    ) = Room.databaseBuilder(app, AnimeDataBase::class.java, "anime_db")
+    ) = Room.inMemoryDatabaseBuilder(app, AnimeDataBase::class.java)
         .fallbackToDestructiveMigration()
-        .addCallback(
-            object : RoomDatabase.Callback() {
-                override fun onOpen(db: SupportSQLiteDatabase) {
-                    db.execSQL(
-                        "delete from TopAnimeData"
-                    )
-                }
-            }
-        )
         .build()
 }
