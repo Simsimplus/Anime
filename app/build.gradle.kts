@@ -110,4 +110,7 @@ dependencies {
     implementation("androidx.room:room-ktx:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.room:room-paging:$roomVersion")
+
+    // palette
+    implementation("androidx.palette:palette:1.0.0")
 }

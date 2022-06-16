@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
@@ -16,7 +17,8 @@ import androidx.navigation.NavHostController
 import androidx.paging.compose.collectAsLazyPagingItems
 import io.simsim.anime.data.entity.TopAnimeResponse
 import io.simsim.anime.navi.NaviRoute
-import io.simsim.anime.ui.widget.ScoreStar
+import io.simsim.anime.ui.theme.ScoreColor
+import io.simsim.anime.ui.widget.ScoreStars
 import io.simsim.anime.utils.compose.CoilImage
 import io.simsim.anime.utils.compose.items
 import io.simsim.anime.utils.compose.placeholder
@@ -28,11 +30,10 @@ fun MainScreen(
 ) {
     val topAnimeList = vm.recommendations.collectAsLazyPagingItems()
     val gap = 8.dp
-    val padding = 16.dp
     BoxWithConstraints(
         modifier = Modifier
+            .padding(16.dp)
             .fillMaxSize()
-            .padding(padding)
     ) {
         val columnCount = 3
         val cardWidth = (maxWidth - gap.times(columnCount - 1)).div(columnCount)
@@ -90,11 +91,20 @@ fun TopAnimeCard(
             overflow = TextOverflow.Ellipsis,
             maxLines = 1
         )
-        ScoreStar(
-            modifier = Modifier.placeholder(
-                visible = placeholder,
-            ),
-            score = anime.score.coerceIn(0f, 10f)
-        )
+        Row(
+            verticalAlignment = Alignment.Bottom
+        ) {
+            ScoreStars(
+                modifier = Modifier.placeholder(
+                    visible = placeholder,
+                ),
+                score = anime.score.coerceIn(0f, 10f)
+            )
+            Text(
+                text = anime.score.toString(),
+                style = MaterialTheme.typography.labelSmall.copy(color = ScoreColor)
+            )
+        }
+
     }
 }

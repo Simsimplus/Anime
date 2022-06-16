@@ -3,13 +3,14 @@ package io.simsim.anime
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import io.simsim.anime.navi.NaviRoute
-import io.simsim.anime.ui.screen.AnimeDetailScreen
+import io.simsim.anime.ui.screen.detail.AnimeDetailScreen
 import io.simsim.anime.ui.screen.main.MainScreen
 import io.simsim.anime.ui.theme.AnimeTheme
 
@@ -19,7 +20,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AnimeTheme {
-                MainHost()
+                Surface {
+                    MainHost()
+                }
             }
         }
     }
