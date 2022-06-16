@@ -19,6 +19,7 @@ import androidx.palette.graphics.Target
 import io.simsim.anime.data.entity.AnimeFullResponse
 import io.simsim.anime.ui.widget.CenterAlignRow
 import io.simsim.anime.ui.widget.ScoreStars
+import io.simsim.anime.ui.widget.YTBVideo
 import io.simsim.anime.utils.compose.CoilImage
 import io.simsim.anime.utils.compose.getImagePalette
 import io.simsim.anime.utils.compose.placeholder
@@ -51,6 +52,7 @@ fun AnimeDetailScreen(
         val imageWidth = maxWidth / 3
         val imageHeight = imageWidth.times(1.618f)
         val imageSize = DpSize(imageWidth, imageHeight)
+        val videoSize = DpSize(maxWidth, maxWidth.times(maxWidth.div(maxHeight)))
         CompositionLocalProvider(LocalContentColor.provides(Color.White)) {
             Surface(
                 color = bgColor
@@ -88,9 +90,15 @@ fun AnimeDetailScreen(
                     Synopsis(
                         modifier = Modifier
 //                            .weight(1f)
-                            .fillMaxSize()
+                            .fillMaxWidth()
                             .placeholder(loading),
                         synopsis = animeFullData.synopsis
+                    )
+                    YTBVideo(
+                        modifier = Modifier
+                            .size(videoSize)
+                            .placeholder(loading),
+                        ytbId = animeFullData.trailer.youtubeId
                     )
                 }
             }

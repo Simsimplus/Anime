@@ -77,6 +77,7 @@ dependencies {
 
     // accompanist
     implementation("com.google.accompanist:accompanist-placeholder-material:0.24.10-beta")
+    implementation("com.google.accompanist:accompanist-webview:0.24.10-beta")
 
     //hilt
     implementation("com.google.dagger:hilt-android:$hiltVersion")
@@ -113,4 +114,6 @@ dependencies {
 
     // palette
     implementation("androidx.palette:palette:1.0.0")
+
+
 }
