@@ -15,6 +15,10 @@ class JikanRepo(
         service.getAnimeFullById(malId)
     }
 
+    suspend fun getAnimeFullById(malId: Int) = safeRequest {
+        service.getAnimeFullById(malId)
+    }
+
     suspend fun getTopAnime(page: Int = 1) = safeRequest {
         service.getTopAnime(page)
     }

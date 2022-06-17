@@ -41,7 +41,7 @@ fun MainHost() {
             route = NaviRoute.Detail.route,
             arguments = listOf(NaviRoute.Detail.navArgMalId)
         ) { backStackEntry ->
-            AnimeDetailScreen(mailId = backStackEntry.arguments?.getInt(NaviRoute.Detail.argNameMalId)!!)
+            AnimeDetailScreen(malId = backStackEntry.arguments?.getInt(NaviRoute.Detail.argNameMalId)!!)
         }
     }
 }

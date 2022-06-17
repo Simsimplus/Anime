@@ -27,10 +27,13 @@ import io.simsim.anime.utils.compose.placeholder
 @Composable
 fun AnimeDetailScreen(
     vm: AnimeDetailVM = hiltViewModel(),
-    mailId: Int
+    malId: Int,
 ) {
+    LaunchedEffect(malId) {
+        vm.getAnimeDetailFull(malId)
+    }
     val ctx = LocalContext.current
-    val animeFullData by vm.getAnimeDetailFull(mailId)
+    val animeFullData by vm.animeDetailFull
         .collectAsState(initial = AnimeFullResponse.AnimeFullData())
     val loading = animeFullData.malId == 0
     val imageUrl = animeFullData.images.webp.imageUrl
@@ -104,7 +107,6 @@ fun AnimeDetailScreen(
             }
         }
     }
-
 }
 
 
@@ -117,7 +119,11 @@ fun AnimeIntro(
         it.name
     }
     val label =
-        "${anime.status}/$genres/${anime.aired.from.substringBefore("T")}/${anime.episodes} episodes"
+        "${anime.status}/" +
+                (if (anime.airing) "${anime.broadcast.string}/" else "") +
+                "$genres/" +
+                "${anime.aired.from.substringBefore("T")}/" +
+                "${anime.episodes} episodes"
     Column(
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {

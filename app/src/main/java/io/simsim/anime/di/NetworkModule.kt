@@ -6,13 +6,14 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.simsim.anime.network.api.JikanService
 import io.simsim.anime.network.repo.JikanRepo
+import io.simsim.anime.utils.gradle.isDebugMode
 import io.simsim.anime.utils.moshi.moshi
-import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
-import okhttp3.Protocol
+import okhttp3.internal.tls.OkHostnameVerifier
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.create
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -27,10 +28,19 @@ object NetworkModule {
             .connectTimeout(20, TimeUnit.SECONDS)
             .callTimeout(20, TimeUnit.SECONDS)
             .readTimeout(20, TimeUnit.SECONDS)
-            .connectionPool(ConnectionPool(0, 1, TimeUnit.NANOSECONDS))
-            .protocols(listOf(Protocol.HTTP_1_1))
+//            .connectionPool(ConnectionPool(0, 1, TimeUnit.NANOSECONDS))
+//            .protocols(listOf(Protocol.HTTP_1_1))
             .hostnameVerifier { host, sslSection ->
-                true
+                if (isDebugMode) {
+                    true
+                } else {
+                    OkHostnameVerifier.verify(host, sslSection)
+                }
+            }
+            .addInterceptor { chain ->
+                val request = chain.request()
+                Timber.i(request.url.toString())
+                chain.proceed(request)
             }
             .build()
 
