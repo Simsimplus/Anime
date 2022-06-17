@@ -4,9 +4,13 @@ import android.app.Activity
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
@@ -17,6 +21,9 @@ import androidx.core.graphics.ColorUtils
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.palette.graphics.Target
 import io.simsim.anime.data.entity.AnimeFullResponse
+import io.simsim.anime.data.entity.AnimeStatisticsResponse
+import io.simsim.anime.data.entity.getScoreMap
+import io.simsim.anime.ui.theme.ScoreColor
 import io.simsim.anime.ui.widget.CenterAlignRow
 import io.simsim.anime.ui.widget.ScoreStars
 import io.simsim.anime.ui.widget.YTBVideo
@@ -31,10 +38,12 @@ fun AnimeDetailScreen(
 ) {
     LaunchedEffect(malId) {
         vm.getAnimeDetailFull(malId)
+        vm.getAnimeStatistic(malId)
     }
     val ctx = LocalContext.current
     val animeFullData by vm.animeDetailFull
         .collectAsState(initial = AnimeFullResponse.AnimeFullData())
+    val animeStatistics by vm.animeStatistics.collectAsState(initial = AnimeStatisticsResponse.AnimeStatisticsData())
     val loading = animeFullData.malId == 0
     val imageUrl = animeFullData.images.webp.imageUrl
     val imagePalette = getImagePalette(imageKey = imageUrl)
@@ -90,7 +99,7 @@ fun AnimeDetailScreen(
                         AnimeIntro(anime = animeFullData, loading = loading)
                     }
                     ScoreBar(
-                        modifier = Modifier.placeholder(loading),
+                        modifier = Modifier.placeholder(animeStatistics.total == 0 || loading),
                         cardBgColor = Color(
                             ColorUtils.blendARGB(
                                 bgColor.toArgb(),
@@ -98,7 +107,8 @@ fun AnimeDetailScreen(
                                 0.2f
                             )
                         ),
-                        anime = animeFullData
+                        anime = animeFullData,
+                        statistics = animeStatistics
                     )
                     Synopsis(
                         modifier = Modifier
@@ -168,32 +178,86 @@ fun AnimeIntro(
 fun ScoreBar(
     modifier: Modifier = Modifier,
     cardBgColor: Color,
-    anime: AnimeFullResponse.AnimeFullData
+    anime: AnimeFullResponse.AnimeFullData,
+    statistics: AnimeStatisticsResponse.AnimeStatisticsData
 ) {
-    Card(
+    ElevatedCard(
+        modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = cardBgColor
         )
     ) {
-        CenterAlignRow(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround
+        Column(
+            modifier = Modifier.padding(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(text = anime.score.toString(), style = MaterialTheme.typography.displayMedium)
-            Column {
-                ScoreStars(
-                    score = anime.score.toFloat(),
-                    starSize = 20.dp
-                )
-                Text(
-                    text = "by ${anime.scoredBy}",
-                    style = MaterialTheme.typography.labelSmall
-                )
+            CenterAlignRow(
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+
+                Column {
+                    Text(
+                        text = anime.score.toString(),
+                        style = MaterialTheme.typography.displayMedium
+                    )
+                    ScoreStars(
+                        score = anime.score.toFloat(),
+                        starSize = 15.dp
+                    )
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                BoxWithConstraints {
+                    val scoreBarWidth = maxWidth / 2
+                    Column(
+                        horizontalAlignment = Alignment.End
+                    ) {
+                        val scoreStatistic = statistics.getScoreMap()
+                        (5 downTo 1).forEach { score ->
+                            val scorePercentage = scoreStatistic[score] ?: 0.0f
+                            CenterAlignRow {
+                                repeat(score) {
+                                    Icon(
+                                        modifier = Modifier.size(12.dp),
+                                        imageVector = Icons.Rounded.Star,
+                                        contentDescription = "stars",
+                                        tint = ScoreColor
+                                    )
+                                }
+                                LinearProgressIndicator(
+                                    modifier = Modifier
+                                        .width(scoreBarWidth)
+                                        .height(8.dp)
+                                        .clip(MaterialTheme.shapes.extraSmall),
+                                    progress = scorePercentage.div(100f),
+                                    color = ScoreColor,
+                                    trackColor = Color.LightGray
+                                )
+                            }
+                        }
+                        Text(
+                            text = "by ${anime.scoredBy}",
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
+                }
+            }
+            Divider(
+                color = Color.LightGray
+            )
+            CenterAlignRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                CompositionLocalProvider(LocalTextStyle.provides(MaterialTheme.typography.labelSmall)) {
+                    Text(text = "watched:${statistics.completed + statistics.watching}")
+                    Text(text = "planned:${statistics.planToWatch + statistics.onHold}")
+                }
             }
         }
-    }
 
+    }
 }
+
 
 @Composable
 fun Synopsis(modifier: Modifier = Modifier, synopsis: String) {
