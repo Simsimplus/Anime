@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import com.google.accompanist.web.AccompanistWebViewClient
 import com.google.accompanist.web.WebView
 import com.google.accompanist.web.rememberWebViewState
+import io.simsim.anime.utils.compose.placeholder
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
@@ -19,7 +20,7 @@ fun YTBVideo(
         "https://www.youtube.com/embed/${ytbId}?iv_load_policy=3&wmode=opaque&autoplay=0&controls=0"
     val state = rememberWebViewState(url = mediaUrl)
     WebView(
-        modifier = modifier,
+        modifier = modifier.placeholder(state.isLoading),
         captureBackPresses = false,
         state = state,
         onCreated = { webView ->

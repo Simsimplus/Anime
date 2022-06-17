@@ -46,6 +46,16 @@ fun AnimeDetailScreen(
             Color(it.rgb)
         } ?: (primaryColor)
     }
+    DisposableEffect(key1 = bgColor) {
+        (ctx as? Activity)?.let {
+            it.window.statusBarColor = bgColor.toArgb()
+        }
+        onDispose {
+            (ctx as? Activity)?.let {
+                it.window.statusBarColor = primaryColor.toArgb()
+            }
+        }
+    }
     LaunchedEffect(bgColor) {
         (ctx as? Activity)?.let {
             it.window.statusBarColor = bgColor.toArgb()
