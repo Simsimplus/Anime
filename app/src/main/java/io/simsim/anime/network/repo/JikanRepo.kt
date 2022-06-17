@@ -1,5 +1,6 @@
 package io.simsim.anime.network.repo
 
+import io.simsim.anime.data.entity.AnimeType
 import io.simsim.anime.network.api.JikanService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -25,6 +26,10 @@ class JikanRepo(
 
     suspend fun getTopAnime(page: Int = 1) = safeRequest {
         service.getTopAnime(page)
+    }
+
+    suspend fun searchAnime(query: String, type: AnimeType) = safeRequest {
+        service.getAnimeSearch(query, type.type)
     }
 }
 

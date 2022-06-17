@@ -4,8 +4,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,45 +24,58 @@ import io.simsim.anime.utils.compose.CoilImage
 import io.simsim.anime.utils.compose.items
 import io.simsim.anime.utils.compose.placeholder
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     vm: MainVM = hiltViewModel(),
     nvc: NavHostController
 ) {
-    val topAnimeList = vm.recommendations.collectAsLazyPagingItems()
-    val gap = 8.dp
-    BoxWithConstraints(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxSize()
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                nvc.navigate(NaviRoute.Search.route)
+            }) {
+                Icon(imageVector = Icons.Rounded.Search, contentDescription = "search")
+            }
+        }
     ) {
-        val columnCount = 3
-        val cardWidth = (maxWidth - gap.times(columnCount - 1)).div(columnCount)
-        val cardHeight = cardWidth.times(1.618f)
-        val imageSize = DpSize(cardWidth, cardHeight)
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(columnCount),
-            horizontalArrangement = Arrangement.spacedBy(gap),
-            verticalArrangement = Arrangement.spacedBy(gap),
+        val topAnimeList = vm.recommendations.collectAsLazyPagingItems()
+        val gap = 8.dp
+        BoxWithConstraints(
+            modifier = Modifier
+                .padding(it)
+                .padding(16.dp)
+                .fillMaxSize()
         ) {
-            items(
-                items = topAnimeList,
-                key = {
-                    it.malId
-                }
-            ) { top ->
-                top?.let {
-                    TopAnimeCard(anime = top, imageSize = imageSize, placeholder = false) {
-                        nvc.navigate(NaviRoute.Detail.getDetailRoute(top.malId))
+            val columnCount = 3
+            val cardWidth = (maxWidth - gap.times(columnCount - 1)).div(columnCount)
+            val cardHeight = cardWidth.times(1.618f)
+            val imageSize = DpSize(cardWidth, cardHeight)
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(columnCount),
+                horizontalArrangement = Arrangement.spacedBy(gap),
+                verticalArrangement = Arrangement.spacedBy(gap),
+            ) {
+                items(
+                    items = topAnimeList,
+                    key = {
+                        it.malId
                     }
-                } ?: TopAnimeCard(
-                    anime = TopAnimeResponse.TopAnimeData(),
-                    imageSize = imageSize,
-                    placeholder = true
-                )
+                ) { top ->
+                    top?.let {
+                        TopAnimeCard(anime = top, imageSize = imageSize, placeholder = false) {
+                            nvc.navigate(NaviRoute.Detail.getDetailRoute(top.malId))
+                        }
+                    } ?: TopAnimeCard(
+                        anime = TopAnimeResponse.TopAnimeData(),
+                        imageSize = imageSize,
+                        placeholder = true
+                    )
+                }
             }
         }
     }
+
 }
 
 @Composable

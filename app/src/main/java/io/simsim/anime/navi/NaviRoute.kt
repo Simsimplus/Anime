@@ -14,5 +14,7 @@ sealed class NaviRoute(val route: String) {
         val navArgMalId = navArgument("mail_id") { type = NavType.IntType }
         fun getDetailRoute(mailId: Int) = getRouteWithArgs(argNameMalId to mailId)
     }
+
+    object Search : NaviRoute("search")
 }
 
