@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.lifecycleScope
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -17,6 +18,8 @@ import io.simsim.anime.ui.screen.detail.AnimeDetailScreen
 import io.simsim.anime.ui.screen.main.MainScreen
 import io.simsim.anime.ui.screen.search.SearchScreen
 import io.simsim.anime.ui.theme.AnimeTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -28,6 +31,19 @@ class MainActivity : ComponentActivity() {
                     MainHost()
                 }
             }
+        }
+        handleNavigationStartWhitePage()
+
+    }
+
+    /**
+     * 小米k30 pro 会启动白页，滑动才会到主页
+     * @see <a href = "https://issuetracker.google.com/issues/227926002">issuetracker</a>
+     */
+    private fun handleNavigationStartWhitePage() {
+        lifecycleScope.launch {
+            delay(50)
+            window.setBackgroundDrawableResource(android.R.color.transparent)
         }
     }
 }
