@@ -12,6 +12,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -39,9 +41,27 @@ fun MainScreen(
     val mainState by vm.mainState.collectAsState()
     val loading = mainState is MainVM.MainState.Loading
     val lottieComposition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.loading))
+    val topAppBarScrollState = rememberTopAppBarScrollState()
+    val topAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topAppBarScrollState)
+    val maxWidth = LocalConfiguration.current.screenWidthDp.dp
     Scaffold(
+        topBar = {
+            SmallTopAppBar(
+                title = {
+                    Text(text = "Top Anime")
+                },
+                actions = {
+                    IconButton(onClick = {
+                        nvc.navigate(NaviRoute.Search.route)
+                    }) {
+                        Icon(imageVector = Icons.Rounded.Search, contentDescription = "search")
+                    }
+                },
+                scrollBehavior = topAppBarScrollBehavior
+            )
+        },
         floatingActionButton = {
-            if (!loading) {
+            if (!loading && topAppBarScrollState.offset < 0) {
                 FloatingActionButton(onClick = {
                     nvc.navigate(NaviRoute.Search.route)
                 }) {
@@ -52,42 +72,44 @@ fun MainScreen(
     ) {
         val topAnimeList = vm.recommendations.collectAsLazyPagingItems()
         val gap = 8.dp
-        BoxWithConstraints(
+        val columnCount = 3
+        val cardWidth = (maxWidth - gap.times(columnCount - 1)).div(columnCount)
+        val cardHeight = cardWidth.times(1.618f)
+        val imageSize = DpSize(cardWidth, cardHeight)
+        LazyVerticalGrid(
             modifier = Modifier
                 .padding(it)
                 .padding(16.dp)
                 .fillMaxSize()
+                .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+            columns = GridCells.Fixed(columnCount),
+            horizontalArrangement = Arrangement.spacedBy(gap),
+            verticalArrangement = Arrangement.spacedBy(gap),
         ) {
-            val columnCount = 3
-            val cardWidth = (maxWidth - gap.times(columnCount - 1)).div(columnCount)
-            val cardHeight = cardWidth.times(1.618f)
-            val imageSize = DpSize(cardWidth, cardHeight)
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(columnCount),
-                horizontalArrangement = Arrangement.spacedBy(gap),
-                verticalArrangement = Arrangement.spacedBy(gap),
-            ) {
-                items(
-                    items = topAnimeList,
-                    key = {
-                        it.malId
+            items(
+                items = topAnimeList,
+                key = {
+                    it.malId
+                }
+            ) { top ->
+                top?.let {
+                    TopAnimeCard(anime = top, imageSize = imageSize, placeholder = false) {
+                        nvc.navigate(NaviRoute.Detail.getDetailRoute(top.malId))
                     }
-                ) { top ->
-                    top?.let {
-                        TopAnimeCard(anime = top, imageSize = imageSize, placeholder = false) {
-                            nvc.navigate(NaviRoute.Detail.getDetailRoute(top.malId))
-                        }
-                    } ?: TopAnimeCard(
-                        anime = TopAnimeResponse.TopAnimeData(),
-                        imageSize = imageSize,
-                        placeholder = true
-                    )
-                }
+                } ?: TopAnimeCard(
+                    anime = TopAnimeResponse.TopAnimeData(),
+                    imageSize = imageSize,
+                    placeholder = true
+                )
             }
-            if (loading) {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    LottieAnimation(composition = lottieComposition)
-                }
+        }
+        if (loading) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                LottieAnimation(
+                    modifier = Modifier.align(Alignment.Center),
+                    composition = lottieComposition,
+                    iterations = Int.MAX_VALUE
+                )
             }
         }
     }

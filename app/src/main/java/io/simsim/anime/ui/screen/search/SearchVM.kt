@@ -11,7 +11,10 @@ import io.simsim.anime.data.entity.AnimeType
 import io.simsim.anime.data.pagination.SearchAnimeRemoteMediator
 import io.simsim.anime.network.repo.JikanRepo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,17 +36,14 @@ class SearchVM @Inject constructor(
                 pageSize = 10
             ),
             remoteMediator = SearchAnimeRemoteMediator(
-                repo, db, it
+                repo = repo, db = db, query = it, searchState = _searchState
             )
         ) {
             db.searchDao().getAllPS()
-        }.flow.onEach {
-            _searchState.emit(SearchState.Success)
-        }
+        }.flow
     }
 
     fun search(query: String, type: AnimeType) = viewModelScope.launch {
-        _searchState.emit(SearchState.Searching)
         db.searchDao().clear()
         queryFlow.emit(query to type)
     }

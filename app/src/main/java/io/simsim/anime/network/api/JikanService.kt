@@ -23,6 +23,7 @@ interface JikanService {
     @GET("anime")
     suspend fun getAnimeSearch(
         @Query("q") query: String,
-        @Query("type") type: String
+        @Query("type") type: String,
+        @Query("page") page: Int
     ): Response<SearchAnimeResponse>
 }

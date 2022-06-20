@@ -28,8 +28,8 @@ class JikanRepo(
         service.getTopAnime(page)
     }
 
-    suspend fun searchAnime(query: String, type: AnimeType) = safeRequest {
-        service.getAnimeSearch(query, type.type)
+    suspend fun searchAnime(query: String, type: AnimeType, page: Int) = safeRequest {
+        service.getAnimeSearch(query, type.type, page)
     }
 }
 
