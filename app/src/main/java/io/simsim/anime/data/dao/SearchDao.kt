@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
+import io.simsim.anime.data.entity.AnimeType
 import io.simsim.anime.data.entity.SearchAnimeResponse
 
 @Dao
@@ -46,6 +47,15 @@ interface SearchDao {
         "select (currentPage + 1) from SearchAnimePagination order by currentPage desc limit 1 "
     )
     suspend fun getNextPage(): Int?
+
+    @Query(
+        "select * from SearchAnimePagination where currentPage = :page and searchQuery = :query and searchType = :type limit 1"
+    )
+    suspend fun isSearched(
+        query: String,
+        type: AnimeType,
+        page: Int
+    ): SearchAnimeResponse.SearchAnimePagination?
 
     @Transaction
     suspend fun insertResponse(

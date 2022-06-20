@@ -1,5 +1,6 @@
 package io.simsim.anime.ui.screen.main
 
+import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -20,13 +21,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.rememberLottieComposition
-import io.simsim.anime.R
 import io.simsim.anime.data.entity.TopAnimeResponse
 import io.simsim.anime.navi.NaviRoute
 import io.simsim.anime.ui.theme.ScoreColor
+import io.simsim.anime.ui.widget.Loading
 import io.simsim.anime.ui.widget.ScoreStars
 import io.simsim.anime.utils.compose.CoilImage
 import io.simsim.anime.utils.compose.items
@@ -40,9 +38,11 @@ fun MainScreen(
 ) {
     val mainState by vm.mainState.collectAsState()
     val loading = mainState is MainVM.MainState.Loading
-    val lottieComposition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.loading))
     val topAppBarScrollState = rememberTopAppBarScrollState()
-    val topAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topAppBarScrollState)
+    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
+        decayAnimationSpec = rememberSplineBasedDecay(),
+        state = topAppBarScrollState
+    )
     val maxWidth = LocalConfiguration.current.screenWidthDp.dp
     Scaffold(
         topBar = {
@@ -103,15 +103,10 @@ fun MainScreen(
                 )
             }
         }
-        if (loading) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                LottieAnimation(
-                    modifier = Modifier.align(Alignment.Center),
-                    composition = lottieComposition,
-                    iterations = Int.MAX_VALUE
-                )
-            }
-        }
+        Loading(
+            modifier = Modifier.fillMaxSize(),
+            loading = loading
+        )
     }
 
 }

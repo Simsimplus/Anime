@@ -19,7 +19,8 @@
         <activity
             android:name="io.simsim.anime.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.Anime">
+            android:theme="@style/Theme.Anime"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

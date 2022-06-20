@@ -24,7 +24,6 @@ class SearchAnimeRemoteMediator(
     ): MediatorResult {
         val page = when (loadType) {
             LoadType.REFRESH -> {
-                searchState.emit(SearchVM.SearchState.Searching)
                 1
             }
             LoadType.PREPEND -> return MediatorResult.Success(true)
@@ -34,11 +33,39 @@ class SearchAnimeRemoteMediator(
                 return MediatorResult.Success(true)
             }
         }
+        val searched = db.searchDao().isSearched(query.first, query.second, page)
+        if (searched != null) {
+            searchState.emit(
+                if (searched.items.total > 0) {
+                    SearchVM.SearchState.Success(
+                        searched
+                    )
+                } else {
+                    SearchVM.SearchState.Empty
+                }
+            )
+            return MediatorResult.Success(!searched.hasNextPage)
+        }
+        if (loadType == LoadType.REFRESH) {
+            searchState.emit(SearchVM.SearchState.Searching)
+        }
         return repo.searchAnime(query.first, query.second, page).fold(
             onSuccess = { response ->
                 val endOfPaginationReached = !response.pagination.hasNextPage
+                response.pagination.apply {
+                    searchQuery = query.first
+                    searchType = query.second
+                }
                 db.searchDao().insertResponse(response)
-                searchState.emit(SearchVM.SearchState.Success)
+                searchState.emit(
+                    if (response.pagination.items.total > 0) {
+                        SearchVM.SearchState.Success(
+                            response.pagination
+                        )
+                    } else {
+                        SearchVM.SearchState.Empty
+                    }
+                )
                 MediatorResult.Success(endOfPaginationReached)
             },
             onFailure = {

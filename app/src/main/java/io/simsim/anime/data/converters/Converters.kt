@@ -4,6 +4,7 @@ import androidx.room.TypeConverter
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import io.simsim.anime.data.entity.AnimeType
 import io.simsim.anime.data.entity.Images
 import io.simsim.anime.data.entity.SearchAnimeResponse
 import io.simsim.anime.data.entity.TopAnimeResponse
@@ -59,3 +60,36 @@ object StringListConverter : ListConverter<String>(String::class.java)
 object SearchAnimePageInfoConverter :
     Converter<SearchAnimeResponse.SearchAnimePagination.SearchAnimePageInfo>(SearchAnimeResponse.SearchAnimePagination.SearchAnimePageInfo::class.java)
 
+object AnimeTypeConverters {
+    @TypeConverter
+    fun type2String(value: AnimeType): String {
+        return value.type
+    }
+
+    @TypeConverter
+    fun string2Type(string: String): AnimeType {
+        return when (string) {
+            AnimeType.MOVIE.type -> {
+                AnimeType.MOVIE
+            }
+            AnimeType.MUSIC.type -> {
+                AnimeType.MUSIC
+            }
+            AnimeType.ONA.type -> {
+                AnimeType.ONA
+            }
+            AnimeType.OVA.type -> {
+                AnimeType.OVA
+            }
+            AnimeType.SPECIAL.type -> {
+                AnimeType.SPECIAL
+            }
+            AnimeType.TV.type -> {
+                AnimeType.TV
+            }
+            else -> {
+                AnimeType.TV
+            }
+        }
+    }
+}

@@ -5,9 +5,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.simsim.anime.data.db.AnimeDataBase
 import io.simsim.anime.data.entity.AnimeType
+import io.simsim.anime.data.entity.SearchAnimeResponse
 import io.simsim.anime.data.pagination.SearchAnimeRemoteMediator
 import io.simsim.anime.network.repo.JikanRepo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -25,7 +27,7 @@ class SearchVM @Inject constructor(
 ) : ViewModel() {
 
     private val queryFlow = MutableSharedFlow<Pair<String, AnimeType>>()
-    private val _searchState = MutableStateFlow<SearchState>(SearchState.NoResult)
+    private val _searchState = MutableStateFlow<SearchState>(SearchState.Init)
     val searchState: StateFlow<SearchState>
         get() = _searchState
 
@@ -40,7 +42,7 @@ class SearchVM @Inject constructor(
             )
         ) {
             db.searchDao().getAllPS()
-        }.flow
+        }.flow.cachedIn(viewModelScope)
     }
 
     fun search(query: String, type: AnimeType) = viewModelScope.launch {
@@ -49,9 +51,13 @@ class SearchVM @Inject constructor(
     }
 
     sealed class SearchState {
-        object NoResult : SearchState()
+        object Init : SearchState()
         object Searching : SearchState()
-        object Success : SearchState()
+        data class Success(
+            val pageInfo: SearchAnimeResponse.SearchAnimePagination
+        ) : SearchState()
+
+        object Empty : SearchState()
         object Fail : SearchState()
     }
 

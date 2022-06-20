@@ -16,7 +16,7 @@ import io.simsim.anime.data.entity.TopAnimeResponse
         SearchAnimeResponse.SearchAnimeData::class,
         SearchAnimeResponse.SearchAnimePagination::class
     ],
-    version = 2,
+    version = 1,
     exportSchema = false
 )
 @TypeConverters(
@@ -24,7 +24,8 @@ import io.simsim.anime.data.entity.TopAnimeResponse
     ProducerListConverter::class,
     StringListConverter::class,
     TopAnimePageInfoConverter::class,
-    SearchAnimePageInfoConverter::class
+    SearchAnimePageInfoConverter::class,
+    AnimeTypeConverters::class
 )
 abstract class AnimeDataBase : RoomDatabase() {
     abstract fun topAnimeDao(): TopAnimeDao

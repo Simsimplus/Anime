@@ -176,7 +176,9 @@ data class SearchAnimeResponse(
         @PrimaryKey @Json(name = "current_page") var currentPage: Int = 0,
         @Json(name = "has_next_page") var hasNextPage: Boolean = false,
         @Json(name = "items") var items: SearchAnimePageInfo = SearchAnimePageInfo(),
-        @Json(name = "last_visible_page") var lastVisiblePage: Int = 0
+        @Json(name = "last_visible_page") var lastVisiblePage: Int = 0,
+        @Json(ignore = true) var searchQuery: String = "",
+        @Json(ignore = true) var searchType: AnimeType = AnimeType.TV,
     ) {
         @Keep
         @JsonClass(generateAdapter = true)
