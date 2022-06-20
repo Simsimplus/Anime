@@ -1,6 +1,7 @@
 import io.simsim.buildsrc.Libs.Version.coilVersion
 import io.simsim.buildsrc.Libs.Version.composeVersion
 import io.simsim.buildsrc.Libs.Version.hiltVersion
+import io.simsim.buildsrc.Libs.Version.lottieVersion
 import io.simsim.buildsrc.Libs.Version.naviVersion
 import io.simsim.buildsrc.Libs.Version.pagingVersion
 import io.simsim.buildsrc.Libs.Version.retrofitVersion
@@ -115,6 +116,9 @@ dependencies {
 
     // palette
     implementation("androidx.palette:palette:1.0.0")
+
+    // lottie
+    implementation("com.airbnb.android:lottie-compose:$lottieVersion")
 
 
 }

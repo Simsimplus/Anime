@@ -8,6 +8,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
@@ -16,6 +18,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieComposition
+import io.simsim.anime.R
 import io.simsim.anime.data.entity.TopAnimeResponse
 import io.simsim.anime.navi.NaviRoute
 import io.simsim.anime.ui.theme.ScoreColor
@@ -30,12 +36,17 @@ fun MainScreen(
     vm: MainVM = hiltViewModel(),
     nvc: NavHostController
 ) {
+    val mainState by vm.mainState.collectAsState()
+    val loading = mainState is MainVM.MainState.Loading
+    val lottieComposition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.loading))
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                nvc.navigate(NaviRoute.Search.route)
-            }) {
-                Icon(imageVector = Icons.Rounded.Search, contentDescription = "search")
+            if (!loading) {
+                FloatingActionButton(onClick = {
+                    nvc.navigate(NaviRoute.Search.route)
+                }) {
+                    Icon(imageVector = Icons.Rounded.Search, contentDescription = "search")
+                }
             }
         }
     ) {
@@ -71,6 +82,11 @@ fun MainScreen(
                         imageSize = imageSize,
                         placeholder = true
                     )
+                }
+            }
+            if (loading) {
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    LottieAnimation(composition = lottieComposition)
                 }
             }
         }

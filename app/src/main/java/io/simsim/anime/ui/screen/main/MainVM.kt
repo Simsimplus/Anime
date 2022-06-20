@@ -16,6 +16,8 @@ class MainVM @Inject constructor(
     db: AnimeDataBase,
     rm: TopAnimeRemoteMediator
 ) : ViewModel() {
+    val mainState = rm.mainState
+
     @OptIn(ExperimentalPagingApi::class)
     val recommendations = Pager(
         config = PagingConfig(
@@ -26,4 +28,10 @@ class MainVM @Inject constructor(
     ) {
         db.topAnimeDao().getAllPS()
     }.flow.cachedIn(viewModelScope)
+
+    sealed class MainState {
+        object Loading : MainState()
+        object Success : MainState()
+        object Fail : MainState()
+    }
 }
