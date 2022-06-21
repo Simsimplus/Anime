@@ -56,5 +56,4 @@ class SearchVM @Inject constructor(
         object Empty : SearchState()
         object Fail : SearchState()
     }
-
 }

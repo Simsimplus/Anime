@@ -2,7 +2,6 @@ package io.simsim.anime.utils.gradle
 
 import io.simsim.anime.BuildConfig
 
-
 /**
  * app debuggable
  */

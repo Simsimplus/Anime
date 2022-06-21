@@ -1,6 +1,5 @@
 package io.simsim.anime.data.entity
 
-
 import androidx.annotation.Keep
 import androidx.room.Entity
 import androidx.room.Ignore
@@ -112,7 +111,6 @@ data class SearchAnimeResponse(
             @Json(name = "type") var type: String = "",
             @Json(name = "url") var url: String = ""
         )
-
 
         @Keep
         @JsonClass(generateAdapter = true)

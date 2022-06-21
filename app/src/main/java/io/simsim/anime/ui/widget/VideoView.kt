@@ -17,7 +17,7 @@ fun YTBVideo(
     ytbId: String
 ) {
     val mediaUrl =
-        "https://www.youtube.com/embed/${ytbId}?iv_load_policy=3&wmode=opaque&autoplay=0&controls=0"
+        "https://www.youtube.com/embed/$ytbId?iv_load_policy=3&wmode=opaque&autoplay=0&controls=0"
     val state = rememberWebViewState(url = mediaUrl)
     WebView(
         modifier = modifier.placeholder(state.isLoading),

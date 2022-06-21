@@ -17,4 +17,3 @@ sealed class NaviRoute(val route: String) {
 
     object Search : NaviRoute("search")
 }
-

@@ -191,8 +191,6 @@ fun SearchTabContent(
                 }
             }
         }
-
-
     }
 }
 

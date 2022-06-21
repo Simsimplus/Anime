@@ -129,7 +129,6 @@ fun MainScreen(
             loading = loading && topAnimeList.itemCount == 0
         )
     }
-
 }
 
 @Composable
@@ -173,6 +172,5 @@ fun TopAnimeCard(
                 style = MaterialTheme.typography.labelSmall.copy(color = ScoreColor)
             )
         }
-
     }
 }

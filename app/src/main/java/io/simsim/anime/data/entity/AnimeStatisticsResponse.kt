@@ -1,6 +1,5 @@
 package io.simsim.anime.data.entity
 
-
 import androidx.annotation.Keep
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
@@ -32,6 +31,6 @@ data class AnimeStatisticsResponse(
 }
 
 fun AnimeStatisticsResponse.AnimeStatisticsData.getScoreMap() =
-    (1..5).associateWith { 0f }.mapValues { (score, per) ->
+    (1..5).associateWith { 0f }.mapValues { (score, _) ->
         scores.filter { it.score in score..(score * 2) }.sumOf { it.percentage }.toFloat()
     }

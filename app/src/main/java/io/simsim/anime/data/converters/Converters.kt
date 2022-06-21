@@ -43,7 +43,6 @@ abstract class ListConverter<T : Any>(
     fun string2List(string: String): List<T> {
         return adapter.fromJson(string)!!
     }
-
 }
 
 object ImagesConverter :

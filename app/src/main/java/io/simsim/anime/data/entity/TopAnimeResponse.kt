@@ -121,7 +121,6 @@ data class TopAnimeResponse(
             @Json(name = "url") var url: String = ""
         )
 
-
         @Keep
         @JsonClass(generateAdapter = true)
         data class Licensor(

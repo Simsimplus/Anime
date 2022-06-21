@@ -138,7 +138,6 @@ fun AnimeDetailScreen(
     }
 }
 
-
 @Composable
 fun AnimeIntro(
     anime: AnimeFullResponse.AnimeFullData,
@@ -263,10 +262,8 @@ fun ScoreBar(
                 }
             }
         }
-
     }
 }
-
 
 @Composable
 fun Synopsis(modifier: Modifier = Modifier, synopsis: String) {
