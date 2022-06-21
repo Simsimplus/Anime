@@ -3,7 +3,6 @@ package io.simsim.anime.ui.screen.search
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -22,6 +21,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import io.simsim.anime.data.entity.AnimeType
@@ -45,16 +45,12 @@ fun SearchScreen(
     var query by rememberSaveable {
         mutableStateOf("")
     }
-    var type by remember { mutableStateOf(AnimeType.TV) }
+    var type by rememberSaveable { mutableStateOf(AnimeType.TV) }
     val searchState by vm.searchState.collectAsState()
-    val searchResultCount =
-        (searchState as? SearchVM.SearchState.Success)?.pageInfo?.items?.total ?: 0
-    val searching = searchState is SearchVM.SearchState.Searching
     val results = vm.queryResult.collectAsLazyPagingItems()
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val snackbarHostState = remember { SnackbarHostState() }
-    val lazyListState = rememberLazyListState()
     LaunchedEffect(searchState, focusRequester) {
         if (searchState is SearchVM.SearchState.Searching) {
             focusRequester.freeFocus()
@@ -109,67 +105,93 @@ fun SearchScreen(
                 )
             }
         },
-    ) {
-        Box(
+    ) { paddingValues ->
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(it)
+                .padding(paddingValues),
         ) {
-            when (searchState) {
-                SearchVM.SearchState.Empty -> {
-                    Text(modifier = Modifier.align(Alignment.Center), text = "no result!")
-                }
-                SearchVM.SearchState.Fail -> {
-                    Text(
-                        modifier = Modifier.align(Alignment.Center),
-                        text = "error occur, please retry!"
+            ScrollableTabRow(
+                selectedTabIndex = AnimeType.values().indexOf(type),
+                edgePadding = 8.dp
+            ) {
+                AnimeType.values().forEach { tabType ->
+                    Tab(
+                        selected = tabType == type,
+                        onClick = {
+                            type = tabType
+                            vm.search(query, type)
+                        },
+                        text = { Text(text = tabType.type) }
                     )
                 }
-                SearchVM.SearchState.Init -> {
-                    Text(modifier = Modifier.align(Alignment.Center), text = "type and search!")
-                }
-                SearchVM.SearchState.Searching -> {
-                    Loading(modifier = Modifier.fillMaxSize(), loading = searching)
-                }
-                is SearchVM.SearchState.Success -> {
-                    LazyColumn(
-                        state = lazyListState,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        item {
-                            if (results.itemCount > 0) {
-                                Text(
-                                    text = "find $searchResultCount",
-                                    style = MaterialTheme.typography.titleSmall
-                                )
-                            }
-                        }
-                        items(results, key = { it.malId }) { anime ->
-                            anime?.let {
-                                SearchResultCard(
-                                    modifier = Modifier.clickable {
-                                        nvc.navigate(
-                                            NaviRoute.Detail.getDetailRoute(anime.malId)
-                                        ) {
-                                            this.popUpTo(NaviRoute.Search.route) {
-                                                saveState = true
-                                            }
-                                            restoreState = true
-                                        }
-                                    },
-                                    anime = anime
-                                )
-                            } ?: SearchResultCard(
-                                modifier = Modifier.placeholder(true),
-                                anime = SearchAnimeResponse.SearchAnimeData(),
+            }
+            SearchTabContent(
+                searchState, results
+            ) { anime ->
+                nvc.navigate(
+                    NaviRoute.Detail.getDetailRoute(anime.malId)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun SearchTabContent(
+    searchState: SearchVM.SearchState,
+    searchResults: LazyPagingItems<SearchAnimeResponse.SearchAnimeData>,
+    onSearchResultCardClick: (SearchAnimeResponse.SearchAnimeData) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        when (searchState) {
+            SearchVM.SearchState.Empty -> {
+                Text(modifier = Modifier.align(Alignment.Center), text = "no result!")
+            }
+            SearchVM.SearchState.Fail -> {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = "error occur, please retry!"
+                )
+            }
+            SearchVM.SearchState.Init -> {
+                Text(modifier = Modifier.align(Alignment.Center), text = "type and search!")
+            }
+            SearchVM.SearchState.Searching -> {
+                Loading(modifier = Modifier.fillMaxSize(), loading = true)
+            }
+            is SearchVM.SearchState.Success -> {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    item {
+                        if (searchResults.itemCount > 0) {
+                            Text(
+                                text = "find ${searchState.pageInfo.items.total}",
+                                style = MaterialTheme.typography.titleSmall
                             )
                         }
                     }
+                    items(searchResults, key = { it.malId }) { anime ->
+                        anime?.let {
+                            SearchResultCard(
+                                modifier = Modifier.clickable {
+                                    onSearchResultCardClick(anime)
+                                },
+                                anime = anime
+                            )
+                        } ?: SearchResultCard(
+                            modifier = Modifier.placeholder(true),
+                            anime = SearchAnimeResponse.SearchAnimeData(),
+                        )
+                    }
                 }
             }
-
-
         }
+
 
     }
 }

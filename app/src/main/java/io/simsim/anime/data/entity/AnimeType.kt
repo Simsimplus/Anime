@@ -1,10 +1,15 @@
 package io.simsim.anime.data.entity
 
-sealed class AnimeType(val type: String) {
-    object TV : AnimeType("tv")
-    object MOVIE : AnimeType("movie")
-    object OVA : AnimeType("ova")
-    object SPECIAL : AnimeType("special")
-    object ONA : AnimeType("ona")
-    object MUSIC : AnimeType("music")
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+
+@Parcelize
+enum class AnimeType(val type: String) : Parcelable {
+    TV("tv"),
+    MOVIE("movie"),
+    OVA("ova"),
+    SPECIAL("special"),
+    ONA("ona"),
+    MUSIC("music")
 }
