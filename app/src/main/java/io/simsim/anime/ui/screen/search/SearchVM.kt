@@ -13,10 +13,7 @@ import io.simsim.anime.data.entity.SearchAnimeResponse
 import io.simsim.anime.data.pagination.SearchAnimeRemoteMediator
 import io.simsim.anime.network.repo.JikanRepo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,8 +25,7 @@ class SearchVM @Inject constructor(
 
     private val queryFlow = MutableSharedFlow<Pair<String, AnimeType>>()
     private val _searchState = MutableStateFlow<SearchState>(SearchState.Init)
-    val searchState: StateFlow<SearchState>
-        get() = _searchState
+    val searchState = _searchState.asStateFlow()
 
     @OptIn(ExperimentalCoroutinesApi::class, ExperimentalPagingApi::class)
     val queryResult = queryFlow.flatMapLatest {
@@ -43,7 +39,7 @@ class SearchVM @Inject constructor(
         ) {
             db.searchDao().getAllPS()
         }.flow.cachedIn(viewModelScope)
-    }
+    }.shareIn(viewModelScope, started = SharingStarted.WhileSubscribed(), replay = 1)
 
     fun search(query: String, type: AnimeType) = viewModelScope.launch {
         db.searchDao().clear()

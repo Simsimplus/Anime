@@ -1,10 +1,7 @@
 package io.simsim.anime.data.dao
 
 import androidx.paging.PagingSource
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Transaction
+import androidx.room.*
 import io.simsim.anime.data.entity.AnimeType
 import io.simsim.anime.data.entity.SearchAnimeResponse
 
@@ -16,7 +13,9 @@ interface SearchDao {
     )
     fun getAllPS(): PagingSource<Int, SearchAnimeResponse.SearchAnimeData>
 
-    @Insert
+    @Insert(
+        onConflict = OnConflictStrategy.IGNORE
+    )
     suspend fun insertAll(
         list: List<SearchAnimeResponse.SearchAnimeData>
     )

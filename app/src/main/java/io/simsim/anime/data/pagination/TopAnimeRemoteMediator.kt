@@ -9,7 +9,7 @@ import io.simsim.anime.data.entity.TopAnimeResponse
 import io.simsim.anime.network.repo.JikanRepo
 import io.simsim.anime.ui.screen.main.MainVM
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
@@ -19,8 +19,7 @@ class TopAnimeRemoteMediator @Inject constructor(
 ) : RemoteMediator<Int, TopAnimeResponse.TopAnimeData>() {
 
     private val _mainState = MutableStateFlow<MainVM.MainState>(MainVM.MainState.Loading)
-    val mainState: StateFlow<MainVM.MainState>
-        get() = _mainState
+    val mainState = _mainState.asStateFlow()
 
     override suspend fun load(
         loadType: LoadType,

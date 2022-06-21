@@ -3,18 +3,19 @@ package io.simsim.anime.ui.screen.search
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBackIosNew
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.DpSize
@@ -40,9 +41,8 @@ fun SearchScreen(
     nvc: NavHostController,
     vm: SearchVM = hiltViewModel()
 ) {
-    val ctx = LocalContext.current
     val cs = rememberCoroutineScope()
-    var query by remember {
+    var query by rememberSaveable {
         mutableStateOf("")
     }
     var type by remember { mutableStateOf(AnimeType.TV) }
@@ -54,6 +54,7 @@ fun SearchScreen(
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val snackbarHostState = remember { SnackbarHostState() }
+    val lazyListState = rememberLazyListState()
     LaunchedEffect(searchState, focusRequester) {
         if (searchState is SearchVM.SearchState.Searching) {
             focusRequester.freeFocus()
@@ -132,6 +133,7 @@ fun SearchScreen(
                 }
                 is SearchVM.SearchState.Success -> {
                     LazyColumn(
+                        state = lazyListState,
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         item {
@@ -148,7 +150,12 @@ fun SearchScreen(
                                     modifier = Modifier.clickable {
                                         nvc.navigate(
                                             NaviRoute.Detail.getDetailRoute(anime.malId)
-                                        )
+                                        ) {
+                                            this.popUpTo(NaviRoute.Search.route) {
+                                                saveState = true
+                                            }
+                                            restoreState = true
+                                        }
                                     },
                                     anime = anime
                                 )
