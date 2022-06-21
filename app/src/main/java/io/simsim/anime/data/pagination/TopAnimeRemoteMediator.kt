@@ -5,6 +5,7 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import io.simsim.anime.data.db.AnimeDataBase
+import io.simsim.anime.data.entity.TopAnimeFilterType
 import io.simsim.anime.data.entity.TopAnimeResponse
 import io.simsim.anime.network.repo.JikanRepo
 import io.simsim.anime.ui.screen.main.MainVM
@@ -20,6 +21,7 @@ class TopAnimeRemoteMediator @Inject constructor(
 
     private val _mainState = MutableStateFlow<MainVM.MainState>(MainVM.MainState.Loading)
     val mainState = _mainState.asStateFlow()
+    var filter: TopAnimeFilterType = TopAnimeFilterType.Score
 
     override suspend fun load(
         loadType: LoadType,
@@ -38,7 +40,7 @@ class TopAnimeRemoteMediator @Inject constructor(
                 return MediatorResult.Success(true)
             }
         }
-        return repo.getTopAnime(page).fold(
+        return repo.getTopAnime(page, filter).fold(
             onSuccess = { response ->
                 val endOfPaginationReached = !response.pagination.hasNextPage
                 db.topAnimeDao().insertResponse(response)

@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TopAnimeDao {
-    @Query("select * from TopAnimeData order by score desc")
+    @Query("select * from TopAnimeData")
     fun getAll(): Flow<List<TopAnimeResponse.TopAnimeData>>
 
-    @Query("select * from TopAnimeData order by score desc")
+    @Query("select * from TopAnimeData")
     fun getAllPS(): PagingSource<Int, TopAnimeResponse.TopAnimeData>
 
     @Query("delete from TopAnimeData")

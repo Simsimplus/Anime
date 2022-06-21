@@ -1,6 +1,7 @@
 package io.simsim.anime.network.repo
 
 import io.simsim.anime.data.entity.AnimeType
+import io.simsim.anime.data.entity.TopAnimeFilterType
 import io.simsim.anime.network.api.JikanService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -24,8 +25,9 @@ class JikanRepo(
         service.getAnimeStatistics(malId)
     }
 
-    suspend fun getTopAnime(page: Int = 1) = safeRequest {
-        service.getTopAnime(page)
+    suspend fun getTopAnime(page: Int = 1, filterType: TopAnimeFilterType) = safeRequest {
+        val filterString = if (filterType == TopAnimeFilterType.Score) null else filterType.query
+        service.getTopAnime(page, filterString)
     }
 
     suspend fun searchAnime(query: String, type: AnimeType, page: Int) = safeRequest {

@@ -12,7 +12,10 @@ import retrofit2.http.Query
 interface JikanService {
 
     @GET("top/anime")
-    suspend fun getTopAnime(@Query("page") page: Int): Response<TopAnimeResponse>
+    suspend fun getTopAnime(
+        @Query("page") page: Int,
+        @Query("filter") filter: String? = null
+    ): Response<TopAnimeResponse>
 
     @GET("anime/{mal_id}/full")
     suspend fun getAnimeFullById(@Path("mal_id") mailId: Int): Response<AnimeFullResponse>

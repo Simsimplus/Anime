@@ -1,9 +1,11 @@
 package io.simsim.anime.ui.screen.main
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.*
@@ -20,9 +22,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.paging.compose.collectAsLazyPagingItems
+import io.simsim.anime.data.entity.TopAnimeFilterType
 import io.simsim.anime.data.entity.TopAnimeResponse
 import io.simsim.anime.navi.NaviRoute
 import io.simsim.anime.ui.theme.ScoreColor
+import io.simsim.anime.ui.widget.CenterAlignRow
 import io.simsim.anime.ui.widget.Loading
 import io.simsim.anime.ui.widget.ScoreStars
 import io.simsim.anime.utils.compose.CoilImage
@@ -41,6 +45,7 @@ fun MainScreen(
     val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(
         state = topAppBarScrollState
     )
+    val currentFilterType by vm.filter.collectAsState()
     val maxWidth = LocalConfiguration.current.screenWidthDp.dp
     Scaffold(
         topBar = {
@@ -74,31 +79,49 @@ fun MainScreen(
         val cardWidth = (maxWidth - gap.times(columnCount - 1)).div(columnCount)
         val cardHeight = cardWidth.times(1.618f)
         val imageSize = DpSize(cardWidth, cardHeight)
-        LazyVerticalGrid(
+        Column(
             modifier = Modifier
                 .padding(it)
                 .padding(horizontal = 16.dp)
                 .fillMaxSize()
-                .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
-            columns = GridCells.Fixed(columnCount),
-            horizontalArrangement = Arrangement.spacedBy(gap),
-            verticalArrangement = Arrangement.spacedBy(gap),
         ) {
-            items(
-                items = topAnimeList,
-                key = {
-                    it.malId
+            CenterAlignRow(
+                modifier = Modifier.horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                TopAnimeFilterType.values().forEach { filterType ->
+                    FilterChip(
+                        selected = filterType == currentFilterType,
+                        onClick = { vm.filter(filterType) },
+                        label = {
+                            Text(text = filterType.name)
+                        }
+                    )
                 }
-            ) { top ->
-                top?.let {
-                    TopAnimeCard(anime = top, imageSize = imageSize, placeholder = false) {
-                        nvc.navigate(NaviRoute.Detail.getDetailRoute(top.malId))
+            }
+            LazyVerticalGrid(
+                modifier = Modifier
+                    .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+                columns = GridCells.Fixed(columnCount),
+                horizontalArrangement = Arrangement.spacedBy(gap),
+                verticalArrangement = Arrangement.spacedBy(gap),
+            ) {
+                items(
+                    items = topAnimeList,
+                    key = {
+                        it.malId
                     }
-                } ?: TopAnimeCard(
-                    anime = TopAnimeResponse.TopAnimeData(),
-                    imageSize = imageSize,
-                    placeholder = true
-                )
+                ) { top ->
+                    top?.let {
+                        TopAnimeCard(anime = top, imageSize = imageSize, placeholder = false) {
+                            nvc.navigate(NaviRoute.Detail.getDetailRoute(top.malId))
+                        }
+                    } ?: TopAnimeCard(
+                        anime = TopAnimeResponse.TopAnimeData(),
+                        imageSize = imageSize,
+                        placeholder = true
+                    )
+                }
             }
         }
         Loading(

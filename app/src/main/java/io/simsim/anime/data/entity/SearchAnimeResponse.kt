@@ -18,6 +18,7 @@ data class SearchAnimeResponse(
     @Keep
     @JsonClass(generateAdapter = true)
     data class SearchAnimeData(
+        @PrimaryKey(autoGenerate = true) var dbId: Long = 0L,
         @Ignore @Json(name = "aired") var aired: Aired = Aired(),
         @Json(name = "airing") var airing: Boolean = false,
         @Ignore @Json(name = "background") var background: Any = Any(),
@@ -30,7 +31,7 @@ data class SearchAnimeResponse(
         @Ignore @Json(name = "genres") var genres: List<Genre> = listOf(),
         @Json(name = "images") var images: Images = Images(),
         @Ignore @Json(name = "licensors") var licensors: List<Licensor> = listOf(),
-        @PrimaryKey @Json(name = "mal_id") var malId: Int = 0,
+        @Json(name = "mal_id") var malId: Int = 0,
         @Json(name = "members") var members: Int = 0,
         @Json(name = "popularity") var popularity: Int = 0,
         @Ignore @Json(name = "producers") var producers: List<Producer> = listOf(),
