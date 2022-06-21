@@ -50,7 +50,7 @@ interface SearchDao {
     @Query(
         "select * from SearchAnimePagination where currentPage = :page and searchQuery = :query and searchType = :type limit 1"
     )
-    suspend fun isSearched(
+    suspend fun getPagination(
         query: String,
         type: AnimeType,
         page: Int

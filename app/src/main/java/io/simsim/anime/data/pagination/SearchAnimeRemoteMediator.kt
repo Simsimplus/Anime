@@ -33,7 +33,7 @@ class SearchAnimeRemoteMediator(
                 return MediatorResult.Success(true)
             }
         }
-        val searched = db.searchDao().isSearched(query.first, query.second, page)
+        val searched = db.searchDao().getPagination(query.first, query.second, page)
         if (searched != null) {
             searchState.emit(
                 if (searched.items.total > 0) {

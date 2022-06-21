@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
+import io.simsim.anime.data.entity.TopAnimeFilterType
 import io.simsim.anime.data.entity.TopAnimeResponse
 import kotlinx.coroutines.flow.Flow
 
@@ -35,6 +36,14 @@ interface TopAnimeDao {
         "select (currentPage + 1) from TopAnimePagination order by currentPage desc limit 1 "
     )
     suspend fun getNextPage(): Int?
+
+    @Query(
+        "select * from TopAnimePagination where filterType = :filterType and currentPage = :page"
+    )
+    suspend fun getPagination(
+        filterType: TopAnimeFilterType,
+        page: Int
+    ): TopAnimeResponse.TopAnimePagination?
 
     @Query("delete from TopAnimePagination")
     suspend fun clearPagination()

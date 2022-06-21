@@ -29,8 +29,6 @@ class TopAnimeRemoteMediator @Inject constructor(
     ): MediatorResult {
         val page = when (loadType) {
             LoadType.REFRESH -> {
-                db.topAnimeDao().clear()
-                _mainState.emit(MainVM.MainState.Loading)
                 1
             }
             LoadType.PREPEND -> return MediatorResult.Success(true)
@@ -40,9 +38,20 @@ class TopAnimeRemoteMediator @Inject constructor(
                 return MediatorResult.Success(true)
             }
         }
+        val dbPage = db.topAnimeDao().getPagination(filter, page)
+        if (dbPage != null) {
+            return MediatorResult.Success(
+                !dbPage.hasNextPage
+            )
+        }
+        if (loadType == LoadType.REFRESH) {
+            db.topAnimeDao().clear()
+            _mainState.emit(MainVM.MainState.Loading)
+        }
         return repo.getTopAnime(page, filter).fold(
             onSuccess = { response ->
                 val endOfPaginationReached = !response.pagination.hasNextPage
+                response.pagination.filterType = filter
                 db.topAnimeDao().insertResponse(response)
                 _mainState.emit(MainVM.MainState.Success)
                 MediatorResult.Success(endOfPaginationReached)

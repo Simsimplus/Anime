@@ -16,7 +16,7 @@ import io.simsim.anime.data.entity.TopAnimeResponse
         SearchAnimeResponse.SearchAnimeData::class,
         SearchAnimeResponse.SearchAnimePagination::class
     ],
-    version = 2,
+    version = 1,
     exportSchema = false
 )
 @TypeConverters(

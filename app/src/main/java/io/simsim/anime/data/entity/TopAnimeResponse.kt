@@ -175,6 +175,7 @@ data class TopAnimeResponse(
         @Json(name = "has_next_page") var hasNextPage: Boolean = false,
         @Json(name = "items") var items: TopAnimePageInfo = TopAnimePageInfo(),
         @Json(name = "last_visible_page") var lastVisiblePage: Int = 0,
+        @Json(ignore = true) var filterType: TopAnimeFilterType = TopAnimeFilterType.Score
     ) {
         @Keep
         @JsonClass(generateAdapter = true)
