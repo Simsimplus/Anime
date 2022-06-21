@@ -20,6 +20,6 @@ codestyle.
 
 # Compose
 
-[main_page](./resouces/top_anime_list.png)
-[search_page](./resouces/anime%20search.jpg)
-[detail_page](./resouces/anime_detail.jpg)
+![main_page](./resouces/top_anime_list.png)
+![search_page](./resouces/anime%20search.jpg)
+![detail_page](./resouces/anime_detail.jpg)
