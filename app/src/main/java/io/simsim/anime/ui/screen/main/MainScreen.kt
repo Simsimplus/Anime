@@ -103,7 +103,7 @@ fun MainScreen(
         }
         Loading(
             modifier = Modifier.fillMaxSize(),
-            loading = loading
+            loading = loading && topAnimeList.itemCount == 0
         )
     }
 

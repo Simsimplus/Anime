@@ -17,7 +17,7 @@ interface TopAnimeDao {
     fun getAllPS(): PagingSource<Int, TopAnimeResponse.TopAnimeData>
 
     @Query("delete from TopAnimeData")
-    suspend fun clear()
+    suspend fun clearData()
 
     @Transaction
     @Insert
@@ -36,11 +36,20 @@ interface TopAnimeDao {
     )
     suspend fun getNextPage(): Int?
 
+    @Query("delete from TopAnimePagination")
+    suspend fun clearPagination()
+
     @Transaction
     suspend fun insertResponse(
         response: TopAnimeResponse
     ) {
         insertAll(response.data)
         insertPagination(response.pagination)
+    }
+
+    @Transaction
+    suspend fun clear() {
+        clearData()
+        clearPagination()
     }
 }

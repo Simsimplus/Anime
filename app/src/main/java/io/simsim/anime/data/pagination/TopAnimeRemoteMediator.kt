@@ -27,6 +27,7 @@ class TopAnimeRemoteMediator @Inject constructor(
     ): MediatorResult {
         val page = when (loadType) {
             LoadType.REFRESH -> {
+                db.topAnimeDao().clear()
                 _mainState.emit(MainVM.MainState.Loading)
                 1
             }
