@@ -62,7 +62,10 @@ fun MainHost() {
             route = NaviRoute.Detail.route,
             arguments = listOf(NaviRoute.Detail.navArgMalId)
         ) { backStackEntry ->
-            AnimeDetailScreen(malId = backStackEntry.arguments?.getInt(NaviRoute.Detail.argNameMalId)!!)
+            AnimeDetailScreen(
+                nvc = nvc,
+                malId = backStackEntry.arguments?.getInt(NaviRoute.Detail.argNameMalId)!!
+            )
         }
         composable(
             route = NaviRoute.Search.route,

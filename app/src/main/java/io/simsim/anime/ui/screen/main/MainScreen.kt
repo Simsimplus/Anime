@@ -1,6 +1,5 @@
 package io.simsim.anime.ui.screen.main
 
-import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -39,8 +38,7 @@ fun MainScreen(
     val mainState by vm.mainState.collectAsState()
     val loading = mainState is MainVM.MainState.Loading
     val topAppBarScrollState = rememberTopAppBarScrollState()
-    val topAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
-        decayAnimationSpec = rememberSplineBasedDecay(),
+    val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(
         state = topAppBarScrollState
     )
     val maxWidth = LocalConfiguration.current.screenWidthDp.dp
@@ -79,7 +77,7 @@ fun MainScreen(
         LazyVerticalGrid(
             modifier = Modifier
                 .padding(it)
-                .padding(16.dp)
+                .padding(horizontal = 16.dp)
                 .fillMaxSize()
                 .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
             columns = GridCells.Fixed(columnCount),

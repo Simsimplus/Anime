@@ -1,6 +1,7 @@
 package io.simsim.anime.ui.screen.detail
 
 import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -19,6 +20,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.ColorUtils
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import androidx.palette.graphics.Target
 import io.simsim.anime.data.entity.AnimeFullResponse
 import io.simsim.anime.data.entity.AnimeStatisticsResponse
@@ -33,6 +35,7 @@ import io.simsim.anime.utils.compose.placeholder
 
 @Composable
 fun AnimeDetailScreen(
+    nvc: NavHostController,
     vm: AnimeDetailVM = hiltViewModel(),
     malId: Int,
 ) {
@@ -68,6 +71,12 @@ fun AnimeDetailScreen(
     LaunchedEffect(bgColor) {
         (ctx as? Activity)?.let {
             it.window.statusBarColor = bgColor.toArgb()
+        }
+    }
+    BackHandler {
+        nvc.navigateUp()
+        (ctx as? Activity)?.let {
+            it.window.statusBarColor = primaryColor.toArgb()
         }
     }
     BoxWithConstraints {
