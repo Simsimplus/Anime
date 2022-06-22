@@ -1,5 +1,7 @@
 package io.simsim.anime.ui.screen.search
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -35,7 +37,10 @@ import io.simsim.anime.utils.compose.CoilImage
 import io.simsim.anime.utils.compose.placeholder
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class,
+    ExperimentalAnimationApi::class
+)
 @Composable
 fun SearchScreen(
     nvc: NavHostController,
@@ -44,6 +49,11 @@ fun SearchScreen(
     val cs = rememberCoroutineScope()
     var query by rememberSaveable {
         mutableStateOf("")
+    }
+    LaunchedEffect(query) {
+        if (query.isBlank()) {
+            vm.clearQuery()
+        }
     }
     var type by rememberSaveable { mutableStateOf(AnimeType.TV) }
     val searchState by vm.searchState.collectAsState()
@@ -111,21 +121,24 @@ fun SearchScreen(
                 .fillMaxSize()
                 .padding(paddingValues),
         ) {
-            ScrollableTabRow(
-                selectedTabIndex = AnimeType.values().indexOf(type),
-                edgePadding = 8.dp
-            ) {
-                AnimeType.values().forEach { tabType ->
-                    Tab(
-                        selected = tabType == type,
-                        onClick = {
-                            type = tabType
-                            vm.search(query, type)
-                        },
-                        text = { Text(text = tabType.type) }
-                    )
+            AnimatedVisibility(visible = searchState is SearchVM.SearchState.Success) {
+                ScrollableTabRow(
+                    selectedTabIndex = AnimeType.values().indexOf(type),
+                    edgePadding = 8.dp
+                ) {
+                    AnimeType.values().forEach { tabType ->
+                        Tab(
+                            selected = tabType == type,
+                            onClick = {
+                                type = tabType
+                                vm.search(query, type)
+                            },
+                            text = { Text(text = tabType.type) }
+                        )
+                    }
                 }
             }
+
             SearchTabContent(
                 searchState, results
             ) { anime ->

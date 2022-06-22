@@ -46,6 +46,11 @@ class SearchVM @Inject constructor(
         queryFlow.emit(query to type)
     }
 
+    fun clearQuery() = viewModelScope.launch {
+        db.searchDao().clear()
+        _searchState.emit(SearchState.Init)
+    }
+
     sealed class SearchState {
         object Init : SearchState()
         object Searching : SearchState()
