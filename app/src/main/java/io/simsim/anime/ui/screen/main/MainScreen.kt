@@ -91,6 +91,7 @@ fun MainScreen(
             ) {
                 TopAnimeFilterType.values().forEach { filterType ->
                     FilterChip(
+                        enabled = !loading,
                         selected = filterType == currentFilterType,
                         onClick = { vm.filter(filterType) },
                         label = {
