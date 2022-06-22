@@ -1,10 +1,8 @@
 package io.simsim.anime.data.dao
 
 import androidx.paging.PagingSource
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Transaction
+import androidx.room.*
+import io.simsim.anime.data.entity.AnimeFullResponse
 import io.simsim.anime.data.entity.TopAnimeFilterType
 import io.simsim.anime.data.entity.TopAnimeResponse
 import kotlinx.coroutines.flow.Flow
@@ -61,4 +59,18 @@ interface TopAnimeDao {
         clearData()
         clearPagination()
     }
+
+    // full
+    @Insert(
+        onConflict = OnConflictStrategy.REPLACE
+    )
+    suspend fun insertAnimeFullData(animeFullData: AnimeFullResponse.AnimeFullData)
+
+    @Update
+    suspend fun updateAnimeFullData(animeFullData: AnimeFullResponse.AnimeFullData)
+
+    @Query(
+        "select * from AnimeFullData where malId = :malId"
+    )
+    fun getAnimeFullDataFlow(malId: Int): Flow<AnimeFullResponse.AnimeFullData?>
 }

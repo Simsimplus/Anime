@@ -52,125 +52,15 @@ data class TopAnimeResponse(
         @Json(name = "type") var type: String = "",
         @Json(name = "url") var url: String = "",
         @Json(name = "year") var year: Int = 0
-    ) {
-        @Keep
-        @JsonClass(generateAdapter = true)
-        data class Aired(
-            @Json(name = "from") var from: String = "",
-            @Json(name = "prop") var prop: Prop = Prop(),
-            @Json(name = "to") var to: String = ""
-        ) {
-            @Keep
-            @JsonClass(generateAdapter = true)
-            data class Prop(
-                @Json(name = "from") var from: From = From(),
-                @Json(name = "string") var string: String = "",
-                @Json(name = "to") var to: To = To()
-            ) {
-                @Keep
-                @JsonClass(generateAdapter = true)
-                data class From(
-                    @Json(name = "day") var day: Int = 0,
-                    @Json(name = "month") var month: Int = 0,
-                    @Json(name = "year") var year: Int = 0
-                )
+    )
 
-                @Keep
-                @JsonClass(generateAdapter = true)
-                data class To(
-                    @Json(name = "day") var day: Int = 0,
-                    @Json(name = "month") var month: Int = 0,
-                    @Json(name = "year") var year: Int = 0
-                )
-            }
-        }
-
-        @Keep
-        @JsonClass(generateAdapter = true)
-        data class Broadcast(
-            @Json(name = "day") var day: String = "",
-            @Json(name = "string") var string: String = "",
-            @Json(name = "time") var time: String = "",
-            @Json(name = "timezone") var timezone: String = ""
-        )
-
-        @Keep
-        @JsonClass(generateAdapter = true)
-        data class Demographic(
-            @Json(name = "mal_id") var malId: Int = 0,
-            @Json(name = "name") var name: String = "",
-            @Json(name = "type") var type: String = "",
-            @Json(name = "url") var url: String = ""
-        )
-
-        @Keep
-        @JsonClass(generateAdapter = true)
-        data class ExplicitGenre(
-            @Json(name = "mal_id") var malId: Int = 0,
-            @Json(name = "name") var name: String = "",
-            @Json(name = "type") var type: String = "",
-            @Json(name = "url") var url: String = ""
-        )
-
-        @Keep
-        @JsonClass(generateAdapter = true)
-        data class Genre(
-            @Json(name = "mal_id") var malId: Int = 0,
-            @Json(name = "name") var name: String = "",
-            @Json(name = "type") var type: String = "",
-            @Json(name = "url") var url: String = ""
-        )
-
-        @Keep
-        @JsonClass(generateAdapter = true)
-        data class Licensor(
-            @Json(name = "mal_id") var malId: Int = 0,
-            @Json(name = "name") var name: String = "",
-            @Json(name = "type") var type: String = "",
-            @Json(name = "url") var url: String = ""
-        )
-
-        @Keep
-        @JsonClass(generateAdapter = true)
-        data class Producer(
-            @Json(name = "mal_id") var malId: Int = 0,
-            @Json(name = "name") var name: String = "",
-            @Json(name = "type") var type: String = "",
-            @Json(name = "url") var url: String = ""
-        )
-
-        @Keep
-        @JsonClass(generateAdapter = true)
-        data class Studio(
-            @Json(name = "mal_id") var malId: Int = 0,
-            @Json(name = "name") var name: String = "",
-            @Json(name = "type") var type: String = "",
-            @Json(name = "url") var url: String = ""
-        )
-
-        @Keep
-        @JsonClass(generateAdapter = true)
-        data class Theme(
-            @Json(name = "mal_id") var malId: Int = 0,
-            @Json(name = "name") var name: String = "",
-            @Json(name = "type") var type: String = "",
-            @Json(name = "url") var url: String = ""
-        )
-
-        @Keep
-        @JsonClass(generateAdapter = true)
-        data class Trailer(
-            @Json(name = "embed_url") var embedUrl: String = "",
-            @Json(name = "url") var url: String = "",
-            @Json(name = "youtube_id") var youtubeId: String = ""
-        )
-    }
-
-    @Entity
+    @Entity(
+        primaryKeys = ["currentPage", "filterType"]
+    )
     @Keep
     @JsonClass(generateAdapter = true)
     data class TopAnimePagination(
-        @PrimaryKey @Json(name = "current_page") var currentPage: Int = 1,
+        @Json(name = "current_page") var currentPage: Int = 1,
         @Json(name = "has_next_page") var hasNextPage: Boolean = false,
         @Json(name = "items") var items: TopAnimePageInfo = TopAnimePageInfo(),
         @Json(name = "last_visible_page") var lastVisiblePage: Int = 0,

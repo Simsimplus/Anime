@@ -143,9 +143,8 @@ fun TopAnimeCard(
         verticalArrangement = Arrangement.spacedBy(3.dp)
     ) {
         CoilImage(
-            modifier = Modifier,
+            modifier = Modifier.size(imageSize),
             model = anime.images.webp.imageUrl,
-            imageSize = imageSize,
             contentDescription = "",
             showPlaceholderAlways = placeholder
         )

@@ -92,6 +92,7 @@ dependencies {
     implementation("com.google.accompanist:accompanist-placeholder-material:0.24.10-beta")
     implementation("com.google.accompanist:accompanist-webview:0.24.10-beta")
     implementation("com.google.accompanist:accompanist-navigation-animation:0.24.10-beta")
+    implementation("com.google.accompanist:accompanist-pager:0.24.10-beta")
 
     //hilt
     implementation("com.google.dagger:hilt-android:$hiltVersion")
@@ -131,6 +132,9 @@ dependencies {
 
     // lottie
     implementation("com.airbnb.android:lottie-compose:$lottieVersion")
+
+    // kotlin reflect
+    implementation(kotlin("reflect"))
 
 
 }

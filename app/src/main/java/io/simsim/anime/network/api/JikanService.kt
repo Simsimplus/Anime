@@ -1,9 +1,6 @@
 package io.simsim.anime.network.api
 
-import io.simsim.anime.data.entity.AnimeFullResponse
-import io.simsim.anime.data.entity.AnimeStatisticsResponse
-import io.simsim.anime.data.entity.SearchAnimeResponse
-import io.simsim.anime.data.entity.TopAnimeResponse
+import io.simsim.anime.data.entity.*
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -22,6 +19,9 @@ interface JikanService {
 
     @GET("anime/{mal_id}/statistics")
     suspend fun getAnimeStatistics(@Path("mal_id") mailId: Int): Response<AnimeStatisticsResponse>
+
+    @GET("anime/{mal_id}/pictures")
+    suspend fun getAnimePictures(@Path("mal_id") mailId: Int): Response<AnimeImagesResponse>
 
     @GET("anime")
     suspend fun getAnimeSearch(

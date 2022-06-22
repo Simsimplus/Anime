@@ -212,9 +212,9 @@ fun SearchResultCard(
             )
             Row {
                 CoilImage(
+                    modifier = Modifier.size(imageSize),
                     model = anime.images.webp.imageUrl,
                     contentDescription = "anime image",
-                    imageSize = imageSize
                 )
                 Column(
                     modifier = Modifier.fillMaxHeight(),

@@ -19,10 +19,14 @@ class JikanRepo(
 
     suspend fun getAnimeFullById(malId: Int) = safeRequest {
         service.getAnimeFullById(malId)
-    }
+    }.mapCatching { it.animeFullData }
 
     suspend fun getAnimeStatistic(malId: Int) = safeRequest {
         service.getAnimeStatistics(malId)
+    }
+
+    suspend fun getAnimeImages(malId: Int) = safeRequest {
+        service.getAnimePictures(malId)
     }
 
     suspend fun getTopAnime(page: Int = 1, filterType: TopAnimeFilterType) = safeRequest {

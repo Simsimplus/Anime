@@ -15,6 +15,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import dagger.hilt.android.AndroidEntryPoint
 import io.simsim.anime.navi.NaviRoute
 import io.simsim.anime.ui.screen.detail.AnimeDetailScreen
+import io.simsim.anime.ui.screen.images.ImageScreen
 import io.simsim.anime.ui.screen.main.MainScreen
 import io.simsim.anime.ui.screen.search.SearchScreen
 import io.simsim.anime.ui.theme.AnimeTheme
@@ -59,11 +60,11 @@ fun MainHost() {
         }
         composable(
             route = NaviRoute.Detail.route,
-            arguments = listOf(NaviRoute.Detail.navArgMalId)
+            arguments = NaviRoute.Detail.navArgMalId
         ) { backStackEntry ->
             AnimeDetailScreen(
                 nvc = nvc,
-                malId = backStackEntry.arguments?.getInt(NaviRoute.Detail.argNameMalId)!!
+                malId = backStackEntry.arguments?.getInt(NaviRoute.Detail.argNameMalId)!!,
             )
         }
         composable(
@@ -76,6 +77,14 @@ fun MainHost() {
             }
         ) {
             SearchScreen(nvc = nvc)
+        }
+        composable(
+            route = NaviRoute.Images.route,
+            arguments = NaviRoute.Images.navArgMalId
+        ) { backStackEntry ->
+            ImageScreen(
+                malId = backStackEntry.arguments?.getInt(NaviRoute.Detail.argNameMalId)!!
+            )
         }
     }
 }

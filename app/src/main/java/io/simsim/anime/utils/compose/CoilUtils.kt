@@ -1,7 +1,6 @@
 package io.simsim.anime.utils.compose
 
 import android.graphics.Bitmap
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -9,7 +8,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.DpSize
 import androidx.palette.graphics.Palette
 import coil.Coil
 import coil.compose.AsyncImage
@@ -22,7 +20,6 @@ fun CoilImage(
     modifier: Modifier = Modifier,
     model: Any?,
     contentDescription: String?,
-    imageSize: DpSize,
     showPlaceholderAlways: Boolean = false
 ) {
     val ctx = LocalContext.current
@@ -30,13 +27,13 @@ fun CoilImage(
         mutableStateOf(true)
     }
     val imageRequest = ImageRequest.Builder(ctx).data(model).allowHardware(true).build()
+    val imageModifier = modifier
+        .clip(MaterialTheme.shapes.small)
+        .placeholder(
+            visible = showPlaceholderAlways || imageLoading,
+        )
     AsyncImage(
-        modifier = modifier
-            .size(imageSize)
-            .clip(MaterialTheme.shapes.small)
-            .placeholder(
-                visible = showPlaceholderAlways || imageLoading,
-            ),
+        modifier = imageModifier,
         model = imageRequest,
         contentDescription = contentDescription,
         alignment = Alignment.Center,

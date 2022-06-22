@@ -2,6 +2,7 @@ package io.simsim.anime.ui.screen.detail
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -25,6 +26,7 @@ import androidx.palette.graphics.Target
 import io.simsim.anime.data.entity.AnimeFullResponse
 import io.simsim.anime.data.entity.AnimeStatisticsResponse
 import io.simsim.anime.data.entity.getScoreMap
+import io.simsim.anime.navi.NaviRoute
 import io.simsim.anime.ui.theme.ScoreColor
 import io.simsim.anime.ui.widget.CenterAlignRow
 import io.simsim.anime.ui.widget.ScoreStars
@@ -40,13 +42,12 @@ fun AnimeDetailScreen(
     malId: Int,
 ) {
     LaunchedEffect(malId) {
-        vm.getAnimeDetailFull(malId)
-        vm.getAnimeStatistic(malId)
+        vm.setMalId(malId)
     }
     val ctx = LocalContext.current
-    val animeFullData by vm.animeDetailFull
+    val animeFullData by vm.animeFullDataFlow
         .collectAsState(initial = AnimeFullResponse.AnimeFullData())
-    val animeStatistics by vm.animeStatistics.collectAsState(initial = AnimeStatisticsResponse.AnimeStatisticsData())
+    val animeStatistics = animeFullData.statistic
     val loading = animeFullData.malId == 0
     val imageUrl = animeFullData.images.webp.imageUrl
     val imagePalette = getImagePalette(imageKey = imageUrl)
@@ -100,9 +101,13 @@ fun AnimeDetailScreen(
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         CoilImage(
+                            modifier = Modifier
+                                .clickable {
+                                    nvc.navigate(NaviRoute.Images.getDetailRoute(malId))
+                                }
+                                .size(imageSize),
                             model = imageUrl,
                             contentDescription = "image",
-                            imageSize = imageSize,
                             showPlaceholderAlways = loading
                         )
                         AnimeIntro(anime = animeFullData, loading = loading)

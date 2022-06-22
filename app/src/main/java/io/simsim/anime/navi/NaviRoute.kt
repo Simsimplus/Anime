@@ -11,9 +11,14 @@ sealed class NaviRoute(val route: String) {
     object Main : NaviRoute("main")
     object Detail : NaviRoute("detail/{mail_id}") {
         const val argNameMalId = "mail_id"
-        val navArgMalId = navArgument("mail_id") { type = NavType.IntType }
+        val navArgMalId = listOf(navArgument("mail_id") { type = NavType.IntType })
         fun getDetailRoute(mailId: Int) = getRouteWithArgs(argNameMalId to mailId)
     }
 
     object Search : NaviRoute("search")
+    object Images : NaviRoute("images/{mail_id}") {
+        const val argNameMalId = "mail_id"
+        val navArgMalId = listOf(navArgument("mail_id") { type = NavType.IntType })
+        fun getDetailRoute(mailId: Int) = getRouteWithArgs(argNameMalId to mailId)
+    }
 }

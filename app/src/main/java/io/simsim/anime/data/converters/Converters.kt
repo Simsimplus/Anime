@@ -4,10 +4,7 @@ import androidx.room.TypeConverter
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import io.simsim.anime.data.entity.AnimeType
-import io.simsim.anime.data.entity.Images
-import io.simsim.anime.data.entity.SearchAnimeResponse
-import io.simsim.anime.data.entity.TopAnimeResponse
+import io.simsim.anime.data.entity.*
 import io.simsim.anime.utils.moshi.parseJsonNullable
 import io.simsim.anime.utils.moshi.toJson
 
@@ -45,14 +42,67 @@ abstract class ListConverter<T : Any>(
     }
 }
 
+inline fun <reified T : Any> getTypeConverter(): Converter<T> =
+    object : Converter<T>(T::class.java) {}
+
+//fun Any.generateTypeConverters():List<Any>{
+//    if (!this::class.isData) return emptyList()
+//    this::class.typeParameters.forEach {
+//        it::class.
+//    }
+//    return emptyList()
+//}
+
+val converters = setOf(
+    ImagesConverter,
+    AiredConverter,
+    BroadcastConverter,
+    OPEDConverter,
+    TrailerConverter,
+    AnimeStatisticsDataConverter,
+    DemographicsListConverter,
+    ExplicitGenresListConverter,
+    ExternalListConverter,
+    GenreListConverter,
+    LicensorListConverter,
+    RelationListConverter,
+    StudioListConverter,
+    StudioListConverter,
+    ThemeListConverter,
+    ProducerListConverter,
+    TopAnimePageInfoConverter,
+    StringListConverter,
+    SearchAnimePageInfoConverter,
+    AnimeTypeConverters
+)
+
 object ImagesConverter :
     Converter<Images>(Images::class.java)
+
+object AiredConverter : Converter<Aired>(Aired::class.java)
+
+
+object BroadcastConverter : Converter<Broadcast>(Broadcast::class.java)
+object OPEDConverter : Converter<OPED>(OPED::class.java)
+object TrailerConverter : Converter<Trailer>(Trailer::class.java)
+object AnimeStatisticsDataConverter : Converter<AnimeStatisticsResponse.AnimeStatisticsData>(
+    AnimeStatisticsResponse.AnimeStatisticsData::class.java
+)
+
+
+object DemographicsListConverter : ListConverter<Demographic>(Demographic::class.java)
+object ExplicitGenresListConverter : ListConverter<ExplicitGenre>(ExplicitGenre::class.java)
+object ExternalListConverter : ListConverter<External>(External::class.java)
+object GenreListConverter : ListConverter<Genre>(Genre::class.java)
+object LicensorListConverter : ListConverter<Licensor>(Licensor::class.java)
+object RelationListConverter : ListConverter<Relation>(Relation::class.java)
+object StudioListConverter : ListConverter<Studio>(Studio::class.java)
+object ThemeListConverter : ListConverter<Theme>(Theme::class.java)
+object ProducerListConverter : ListConverter<Producer>(Producer::class.java)
 
 object TopAnimePageInfoConverter :
     Converter<TopAnimeResponse.TopAnimePagination.TopAnimePageInfo>(TopAnimeResponse.TopAnimePagination.TopAnimePageInfo::class.java)
 
-object ProducerListConverter :
-    ListConverter<TopAnimeResponse.TopAnimeData.Producer>(TopAnimeResponse.TopAnimeData.Producer::class.java)
 
 object StringListConverter : ListConverter<String>(String::class.java)
 
@@ -92,3 +142,5 @@ object AnimeTypeConverters {
         }
     }
 }
+
+
