@@ -23,6 +23,9 @@ interface JikanService {
     @GET("anime/{mal_id}/pictures")
     suspend fun getAnimePictures(@Path("mal_id") mailId: Int): Response<AnimeImagesResponse>
 
+    @GET("random/anime")
+    suspend fun getRandomAnime(): Response<RandomAnimeResponse>
+
     @GET("anime")
     suspend fun getAnimeSearch(
         @Query("q") query: String,

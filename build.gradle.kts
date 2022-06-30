@@ -13,7 +13,12 @@ plugins {
 tasks.register<Delete>("clean") {
     delete(rootProject.buildDir)
 }
-
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
 subprojects {
     apply(plugin = "com.diffplug.spotless")
     configure<com.diffplug.gradle.spotless.SpotlessExtension> {

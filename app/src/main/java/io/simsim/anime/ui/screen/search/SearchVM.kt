@@ -19,13 +19,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchVM @Inject constructor(
-    repo: JikanRepo,
+    val repo: JikanRepo,
     private val db: AnimeDataBase
 ) : ViewModel() {
 
     private val queryFlow = MutableSharedFlow<Pair<String, AnimeType>>()
     private val _searchState = MutableStateFlow<SearchState>(SearchState.Init)
     val searchState = _searchState.asStateFlow()
+
+    fun getRandomAnimeState() = repo.getRandomAnimeAsState()
 
     @OptIn(ExperimentalCoroutinesApi::class, ExperimentalPagingApi::class)
     val queryResult = queryFlow.flatMapLatest {

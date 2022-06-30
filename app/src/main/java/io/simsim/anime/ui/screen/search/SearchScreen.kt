@@ -17,24 +17,30 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import io.simsim.anime.data.entity.AnimeType
+import io.simsim.anime.data.entity.RandomAnimeResponse
 import io.simsim.anime.data.entity.SearchAnimeResponse
 import io.simsim.anime.navi.NaviRoute
+import io.simsim.anime.network.repo.RequestState
 import io.simsim.anime.ui.theme.ScoreColor
 import io.simsim.anime.ui.widget.CenterAlignRow
 import io.simsim.anime.ui.widget.Loading
 import io.simsim.anime.ui.widget.ScoreStars
 import io.simsim.anime.utils.compose.CoilImage
 import io.simsim.anime.utils.compose.placeholder
+import io.simsim.anime.utils.sensor.shakeEventFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @OptIn(
@@ -47,8 +53,17 @@ fun SearchScreen(
     vm: SearchVM = hiltViewModel()
 ) {
     val cs = rememberCoroutineScope()
+    val lifecycleOwner = LocalLifecycleOwner.current
     var query by rememberSaveable {
         mutableStateOf("")
+    }
+    var showRandomDialog by remember {
+        mutableStateOf(false)
+    }
+    LaunchedEffect(true) {
+        lifecycleOwner.shakeEventFlow.collectLatest {
+            showRandomDialog = it
+        }
     }
     LaunchedEffect(query) {
         if (query.isBlank()) {
@@ -66,6 +81,50 @@ fun SearchScreen(
             focusRequester.freeFocus()
             keyboardController?.hide()
         }
+    }
+    if (showRandomDialog) {
+        val randomAnimeState by vm.getRandomAnimeState().collectAsState()
+        Dialog(
+            onDismissRequest = { showRandomDialog = false },
+            content = {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        when (randomAnimeState) {
+                            is RequestState.Failure -> {
+                                Text(text = "error")
+                            }
+                            RequestState.Started -> {
+                                CircularProgressIndicator()
+                            }
+                            is RequestState.Success<*> -> {
+                                val anime =
+                                    ((randomAnimeState as RequestState.Success<*>).data as RandomAnimeResponse).data
+                                Text(text = anime.title)
+                                TextButton(
+                                    modifier = Modifier.align(Alignment.End),
+                                    onClick = {
+                                        showRandomDialog = false
+                                        nvc.navigate(NaviRoute.Detail.getDetailRoute(anime.malId))
+                                    }
+                                ) {
+                                    Text(text = "go")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        )
+
     }
     Scaffold(
         snackbarHost = {
